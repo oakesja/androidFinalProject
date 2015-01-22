@@ -24,3 +24,8 @@ proguard/
 
 # Log Files
 *.log
+
+# added by Jacob Oakes
+.classpath
+.project
+.settings/

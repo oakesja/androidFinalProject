@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ScanItGroceryStoreHelper</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_list">ListActivity</string>
+    <string name="title_activity_reminder">ReminderActivity</string>
+    <string name="title_activity_coupon">CouponActivity</string>
+    <string name="title_activity_scanner">ScannerActivity</string>
+    <string name="title_activity_about">AboutActivity</string>
+    <string name="title_activity_shopping">ShoppingActivity</string>
+
+</resources>
