@@ -18,9 +18,10 @@ import android.widget.RelativeLayout;
 public abstract class DrawerActivity extends Activity {
 	public static final String SCANIT = "SCANIT";
 
+	// need to update to v7 version
 	private ActionBarDrawerToggle mDrawerToggle;
 	private DrawerLayout mDrawerLayout;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -31,10 +32,10 @@ public abstract class DrawerActivity extends Activity {
 				.findViewById(R.id.left_drawer);
 
 		String[] options = getResources().getStringArray(R.array.drawer_names);
-//		drawerList.setAdapter(new ArrayAdapter<String>(this,
-//				android.R.layout.simple_expandable_list_item_1, options));
-		TypedArray drawableIds = getResources().obtainTypedArray(R.array.drawer_images);
-		drawerList.setAdapter(new DrawerArrayAdapter(this, options, drawableIds));
+		TypedArray drawableIds = getResources().obtainTypedArray(
+				R.array.drawer_images);
+		drawerList
+				.setAdapter(new DrawerArrayAdapter(this, options, drawableIds));
 		drawerList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
