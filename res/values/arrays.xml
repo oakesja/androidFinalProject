@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="drawer_names">
+        <item>Lists</item>
+        <item>Coupons</item>
+        <item>Reminders</item>
+        <item>Scanner</item>
+        <item>About</item>
+    </string-array>
+    <string-array name="drawer_images">
+        <item>@drawable/ic_action_view_as_list</item>
+        <item>@drawable/ic_action_coupon</item>
+        <item>@drawable/ic_action_reminder</item>
+        <item>@drawable/ic_action_barcode</item>
+        <item>@drawable/ic_action_about</item>
+    </string-array>
+
+</resources>

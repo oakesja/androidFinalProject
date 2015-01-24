@@ -2,11 +2,12 @@ package com.example.scanitgrocerystorehelper;
 
 import android.os.Bundle;
 
-public class ListActivity extends MyActivityWithMenu {
+public class ListActivity extends DrawerActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
+		getActionBar().setTitle(R.string.title_activity_main);
 	}
 }
