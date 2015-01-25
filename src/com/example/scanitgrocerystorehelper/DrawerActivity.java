@@ -9,6 +9,7 @@ import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +26,7 @@ public abstract class DrawerActivity extends Activity {
 	protected DrawerLayout mDrawerLayout;
 	protected ListView mDrawerList;
 	private SparseIntArray mLayoutTitleLookup;
+	private SparseArray<Class<?>> mIntentClassLookup;
 	private TypedArray mDrawableIds;
 
 	@Override
@@ -46,25 +48,8 @@ public abstract class DrawerActivity extends Activity {
 					int position, long id) {
 				// consider using fragments instead of intents
 				Intent intent = new Intent();
-				switch (position) {
-				case 0:
-					intent.setClass(getBaseContext(), MainActivity.class);
-					break;
-				case 1:
-					intent.setClass(getBaseContext(), CouponActivity.class);
-					break;
-				case 2:
-					intent.setClass(getBaseContext(), ReminderActivity.class);
-					break;
-				case 3:
-					intent.setClass(getBaseContext(), ScannerActivity.class);
-					break;
-				case 4:
-					intent.setClass(getBaseContext(), AboutActivity.class);
-					break;
-				default:
-					break;
-				}
+				intent.setClass(getBaseContext(),
+						mIntentClassLookup.get(position));
 				startActivity(intent);
 			}
 		});
@@ -90,6 +75,7 @@ public abstract class DrawerActivity extends Activity {
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
+		intializeIntentClassLookup();
 	}
 
 	@Override
@@ -143,4 +129,14 @@ public abstract class DrawerActivity extends Activity {
 		mLayoutTitleLookup.append(R.layout.activity_scanner,
 				R.string.title_activity_scanner);
 	}
+
+	private void intializeIntentClassLookup() {
+		mIntentClassLookup = new SparseArray<Class<?>>();
+		mIntentClassLookup.put(0, MainActivity.class);
+		mIntentClassLookup.put(1, CouponActivity.class);
+		mIntentClassLookup.put(2, ReminderActivity.class);
+		mIntentClassLookup.put(3, ScannerActivity.class);
+		mIntentClassLookup.put(4, AboutActivity.class);
+	}
+
 }
