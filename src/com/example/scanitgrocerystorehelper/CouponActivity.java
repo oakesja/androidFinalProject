@@ -8,7 +8,5 @@ public class CouponActivity extends DrawerActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_coupon);
-		getActionBar().setTitle(R.string.title_activity_coupon);
-
 	}
 }

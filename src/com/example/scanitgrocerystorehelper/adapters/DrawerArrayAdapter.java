@@ -7,11 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
-import java.util.List;
 
 import com.example.scanitgrocerystorehelper.R;
-import com.example.scanitgrocerystorehelper.R.id;
-import com.example.scanitgrocerystorehelper.R.layout;
 
 
 public class DrawerArrayAdapter extends ArrayAdapter<String> {

@@ -2,8 +2,6 @@ package com.example.scanitgrocerystorehelper;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
 public class ShoppingActivity extends Activity {
 

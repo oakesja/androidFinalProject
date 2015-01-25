@@ -9,11 +9,11 @@ import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.SparseIntArray;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
@@ -24,6 +24,8 @@ public abstract class DrawerActivity extends Activity {
 	private ActionBarDrawerToggle mDrawerToggle;
 	protected DrawerLayout mDrawerLayout;
 	protected ListView mDrawerList;
+	private SparseIntArray mLayoutTitleLookup;
+	private TypedArray mDrawableIds;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +33,12 @@ public abstract class DrawerActivity extends Activity {
 		mDrawerLayout = (DrawerLayout) getLayoutInflater().inflate(
 				R.layout.activity_drawer, null);
 
-		mDrawerList = (ListView) mDrawerLayout
-				.findViewById(R.id.left_drawer);
+		mDrawerList = (ListView) mDrawerLayout.findViewById(R.id.left_drawer);
 
 		String[] options = getResources().getStringArray(R.array.drawer_names);
-		TypedArray drawableIds = getResources().obtainTypedArray(
-				R.array.drawer_images);
+		mDrawableIds = getResources().obtainTypedArray(R.array.drawer_images);
 		mDrawerList.setAdapter(new DrawerArrayAdapter(this, options,
-				drawableIds));
+				mDrawableIds));
 		mDrawerList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -75,13 +75,13 @@ public abstract class DrawerActivity extends Activity {
 
 			public void onDrawerClosed(View view) {
 				super.onDrawerClosed(view);
-//				getActionBar().setTitle(R.string.app_name);
+				// getActionBar().setTitle(R.string.app_name);
 				invalidateOptionsMenu();
 			}
 
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-//				getActionBar().setTitle(R.string.app_name);
+				// getActionBar().setTitle(R.string.app_name);
 				invalidateOptionsMenu();
 			}
 		};
@@ -114,9 +114,33 @@ public abstract class DrawerActivity extends Activity {
 
 	@Override
 	public void setContentView(final int layoutResID) {
+		intializeTitleLookup();
 		RelativeLayout activityContent = (RelativeLayout) mDrawerLayout
 				.findViewById(R.id.content_frame);
 		getLayoutInflater().inflate(layoutResID, activityContent, true);
+		getActionBar().setTitle(mLayoutTitleLookup.get(layoutResID));
 		super.setContentView(mDrawerLayout);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mDrawableIds.recycle();
+	}
+
+	private void intializeTitleLookup() {
+		mLayoutTitleLookup = new SparseIntArray();
+		mLayoutTitleLookup.append(R.layout.activity_main,
+				R.string.title_activity_main);
+		mLayoutTitleLookup.append(R.layout.activity_about,
+				R.string.title_activity_about);
+		mLayoutTitleLookup.append(R.layout.activity_coupon,
+				R.string.title_activity_coupon);
+		mLayoutTitleLookup.append(R.layout.activity_list,
+				R.string.title_activity_list);
+		mLayoutTitleLookup.append(R.layout.activity_reminder,
+				R.string.title_activity_reminder);
+		mLayoutTitleLookup.append(R.layout.activity_scanner,
+				R.string.title_activity_scanner);
 	}
 }
