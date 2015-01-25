@@ -1,4 +1,4 @@
-package com.example.scanitgrocerystorehelper;
+package com.example.scanitgrocerystorehelper.adapters;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -8,6 +8,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import java.util.List;
+
+import com.example.scanitgrocerystorehelper.R;
+import com.example.scanitgrocerystorehelper.R.id;
+import com.example.scanitgrocerystorehelper.R.layout;
 
 
 public class DrawerArrayAdapter extends ArrayAdapter<String> {

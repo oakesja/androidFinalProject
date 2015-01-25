@@ -1,5 +1,7 @@
 package com.example.scanitgrocerystorehelper;
 
+import com.example.scanitgrocerystorehelper.adapters.DrawerArrayAdapter;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;

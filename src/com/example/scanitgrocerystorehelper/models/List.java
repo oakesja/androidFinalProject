@@ -1,4 +1,4 @@
-package com.example.scanitgrocerystorehelper;
+package com.example.scanitgrocerystorehelper.models;
 
 public class List {
 
