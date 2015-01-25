@@ -1,41 +1,68 @@
 package com.example.scanitgrocerystorehelper.models;
 
-public abstract class Reminder {
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
-	private int month;
-	private int day;
-	private int year;
+import android.content.Context;
+
+public abstract class Reminder implements Comparable<Reminder> {
+
+	private Context context;
+	private GregorianCalendar calendar;
 	private boolean willNotify;
 
-	public Reminder(int month, int day, int year) {
-		this.month = month;
-		this.day = day;
-		this.year = year;
+	public Reminder(Context context, GregorianCalendar calendar) {
+		this.calendar = calendar;
 		this.willNotify = false;
+		this.context = context;
+	}
+
+	public GregorianCalendar getCalendar() {
+		return calendar;
+	}
+
+	public void setCalendar(GregorianCalendar calendar) {
+		this.calendar = calendar;
 	}
 
 	public int getMonth() {
-		return month;
+		return calendar.get(GregorianCalendar.MONTH);
 	}
 
 	public void setMonth(int month) {
-		this.month = month;
+		calendar.set(GregorianCalendar.MONTH, month);
 	}
 
 	public int getDay() {
-		return day;
+		return calendar.get(GregorianCalendar.DAY_OF_WEEK);
 	}
 
 	public void setDay(int day) {
-		this.day = day;
+		calendar.set(GregorianCalendar.DAY_OF_WEEK, day);
 	}
 
 	public int getYear() {
-		return year;
+		return calendar.get(GregorianCalendar.YEAR);
 	}
 
 	public void setYear(int year) {
-		this.year = year;
+		calendar.set(GregorianCalendar.YEAR, year);
+	}
+
+	public int getHour() {
+		return calendar.get(GregorianCalendar.HOUR);
+	}
+
+	public void setHour(int hour) {
+		calendar.set(GregorianCalendar.HOUR, hour);
+	}
+
+	public int getMinute() {
+		return calendar.get(GregorianCalendar.MINUTE);
+	}
+
+	public void setMinute(int minute) {
+		calendar.set(GregorianCalendar.MINUTE, minute);
 	}
 
 	public boolean isWillNotify() {
@@ -45,4 +72,24 @@ public abstract class Reminder {
 	public void setWillNotify(boolean willNotify) {
 		this.willNotify = willNotify;
 	}
+	
+	public String getFormmatedDate(){
+		Locale l = context.getResources().getConfiguration().locale;
+		StringBuilder sb = new StringBuilder();
+		sb.append(calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.SHORT, l));
+		sb.append(" ");
+		sb.append(getDay());
+		sb.append(",");
+		sb.append(getYear());
+		return sb.toString();
+			
+	}
+	
+	@Override
+ 	public int compareTo(Reminder another) {
+       	GregorianCalendar anotherDueDate = another.getCalendar();
+       	return calendar.compareTo(anotherDueDate);
+ 	}
+
+	
 }

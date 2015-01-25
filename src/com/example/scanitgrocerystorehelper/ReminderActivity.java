@@ -1,6 +1,8 @@
 package com.example.scanitgrocerystorehelper;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import com.example.scanitgrocerystorehelper.adapters.ReminderArrayAdapter;
 import com.example.scanitgrocerystorehelper.models.ExpirationReminder;
@@ -17,6 +19,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -39,6 +43,16 @@ public class ReminderActivity extends DrawerActivity {
 		mAdapter = new ReminderArrayAdapter(this, mReminders);
 		ListView listview = (ListView) findViewById(R.id.reminders);
 		listview.setAdapter(mAdapter);
+
+		listview.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				showDeleteReminderDialog(position);
+				return false;
+			}
+		});
 	}
 
 	@Override
@@ -130,7 +144,7 @@ public class ReminderActivity extends DrawerActivity {
 						int year = datePicker.getYear();
 						String foodName = editName.getText().toString();
 						ExpirationReminder reminder = new ExpirationReminder(
-								month, day, year, foodName);
+								getActivity(), month, day, year, foodName);
 						addReminder(reminder);
 					}
 				});
@@ -171,8 +185,9 @@ public class ReminderActivity extends DrawerActivity {
 						int hour = timePicker.getCurrentHour();
 						int minute = timePicker.getCurrentMinute();
 						String name = editName.getText().toString();
-						GeneralReminder reminder = new GeneralReminder(month,
-								day, year, hour, minute, name);
+						GeneralReminder reminder = new GeneralReminder(
+								getActivity(), month, day, year, hour, minute,
+								name);
 						addReminder(reminder);
 					}
 				});
@@ -182,8 +197,38 @@ public class ReminderActivity extends DrawerActivity {
 		df.show(getFragmentManager(), "reminder info");
 	}
 
+	public void showDeleteReminderDialog(final int position) {
+		DialogFragment df = new DialogFragment() {
+			@Override
+			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						getActivity());
+				builder.setTitle(R.string.confirm_delete_title);
+				builder.setMessage(R.string.confirm_delete_message);
+				builder.setNegativeButton(android.R.string.cancel, null);
+				builder.setPositiveButton(android.R.string.ok,
+						new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								deleteReminder(mAdapter.getItem(position));
+							}
+						});
+				return builder.create();
+			}
+		};
+		df.show(getFragmentManager(), "delete friend");
+	}
+
 	private void addReminder(Reminder r) {
 		mReminders.add(r);
+		Collections.sort(mReminders);
+		mAdapter.notifyDataSetChanged();
+	}
+
+	private void deleteReminder(Reminder r) {
+		mReminders.remove(r);
+		Collections.sort(mReminders);
 		mAdapter.notifyDataSetChanged();
 	}
 }
