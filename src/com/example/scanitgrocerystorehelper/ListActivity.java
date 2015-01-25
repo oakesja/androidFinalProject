@@ -8,6 +8,5 @@ public class ListActivity extends DrawerActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
-		getActionBar().setTitle(R.string.title_activity_main);
 	}
 }

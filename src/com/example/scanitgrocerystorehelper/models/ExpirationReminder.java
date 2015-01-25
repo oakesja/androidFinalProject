@@ -8,13 +8,23 @@ public class ExpirationReminder extends Reminder {
 
 	private String foodName;
 
-	public ExpirationReminder(Context context, int month, int day, int year, String foodName) {
+	public ExpirationReminder(Context context, int month, int day, int year,
+			String foodName) {
 		super(context, new GregorianCalendar(year, month, day));
+		this.foodName = foodName;
+	}
+
+	public String getFoodName() {
+		return foodName;
+	}
+
+	public void setFoodName(String foodName) {
 		this.foodName = foodName;
 	}
 
 	@Override
 	public String toString() {
-		return "Your " + this.foodName + " expires on " + super.getFormmatedDate();
+		return "Your " + this.foodName + " expires on "
+				+ super.getFormmatedDate();
 	}
 }

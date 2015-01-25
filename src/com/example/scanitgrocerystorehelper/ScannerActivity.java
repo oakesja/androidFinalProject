@@ -13,10 +13,8 @@ public class ScannerActivity extends DrawerActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_scanner);
-		getActionBar().setTitle(R.string.title_activity_scanner);
 		IntentIntegrator it = new IntentIntegrator(this);
 		it.initiateScan();
-
 	}
 
 	@Override

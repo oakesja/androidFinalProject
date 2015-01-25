@@ -1,7 +1,6 @@
 package com.example.scanitgrocerystorehelper;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 import com.example.scanitgrocerystorehelper.adapters.ReminderArrayAdapter;
@@ -36,7 +35,6 @@ public class ReminderActivity extends DrawerActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_reminder);
-		getActionBar().setTitle(R.string.title_activity_reminder);
 
 		mReminders = new ArrayList<Reminder>();
 

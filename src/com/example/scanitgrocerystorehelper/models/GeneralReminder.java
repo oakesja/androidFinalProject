@@ -7,7 +7,6 @@ import android.content.Context;
 public class GeneralReminder extends Reminder {
 
 	private String name;
-	private GregorianCalendar calendar;
 
 	public GeneralReminder(Context context, int month, int day, int year, int hour, int minute,
 			String name) {
