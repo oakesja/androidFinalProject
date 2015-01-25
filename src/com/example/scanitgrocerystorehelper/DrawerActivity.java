@@ -20,7 +20,8 @@ public abstract class DrawerActivity extends Activity {
 
 	// need to update to v7 version
 	private ActionBarDrawerToggle mDrawerToggle;
-	private DrawerLayout mDrawerLayout;
+	protected DrawerLayout mDrawerLayout;
+	protected ListView mDrawerList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +29,15 @@ public abstract class DrawerActivity extends Activity {
 		mDrawerLayout = (DrawerLayout) getLayoutInflater().inflate(
 				R.layout.activity_drawer, null);
 
-		ListView drawerList = (ListView) mDrawerLayout
+		mDrawerList = (ListView) mDrawerLayout
 				.findViewById(R.id.left_drawer);
 
 		String[] options = getResources().getStringArray(R.array.drawer_names);
 		TypedArray drawableIds = getResources().obtainTypedArray(
 				R.array.drawer_images);
-		drawerList
-				.setAdapter(new DrawerArrayAdapter(this, options, drawableIds));
-		drawerList.setOnItemClickListener(new OnItemClickListener() {
+		mDrawerList.setAdapter(new DrawerArrayAdapter(this, options,
+				drawableIds));
+		mDrawerList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -72,12 +73,14 @@ public abstract class DrawerActivity extends Activity {
 
 			public void onDrawerClosed(View view) {
 				super.onDrawerClosed(view);
-				getActionBar().setTitle(R.string.app_name);
+//				getActionBar().setTitle(R.string.app_name);
+				invalidateOptionsMenu();
 			}
 
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-				getActionBar().setTitle(R.string.app_name);
+//				getActionBar().setTitle(R.string.app_name);
+				invalidateOptionsMenu();
 			}
 		};
 

@@ -12,5 +12,11 @@
     <string name="title_activity_shopping">Shopping</string>
     <string name="open_drawer">Open Drawer</string>
     <string name="close_drawer">Close Drawer</string>
-
+    <string name="add_reminder">Add Reminder</string>
+    <string name="select_reminder_type">Select reminder type</string>
+    <string name="create_reminder">Create reminder</string>
+    <string name="hint_general_reminder">Reminder name</string>
+    <string name="hint_food_reminder">Name of food to expire</string>
+    <string name="add">Add</string>
+    
 </resources>
