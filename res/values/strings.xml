@@ -23,5 +23,21 @@
     <string name="notifcation_title">ScanIt! Grocery Store Helper reminder</string>
     <string name="notifcation_text_expiration">Your %s expires today</string>
     <string name="notifcation_text_reminder">%1$s at %2$s</string>
+    <string name="list_header">My Lists</string>
+    <string name="create_dialog_title">Create a list</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="okay">Okay</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_dialog_title">Delete</string>
+    <string name="delete_are_you_sure">Are you sure you want to delete this list?</string>
+    <string name="start_shopping">Start shopping!</string>
+    <string name="done_shopping">Done shopping</string>
+    <string name="reuse_dialog_title">Reuse this list?</string>
+    <string name="reuse_dialog_message">Would you like to reuse</string>
+    <string name="item">Item</string>
+    <string name="quantity">Quantity</string>
+    <string name="price">Price</string>
+    <string name="plus">+</string>
 
 </resources>
