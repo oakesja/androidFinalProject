@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.example.scanitgrocerystorehelper.adapters.ReminderArrayAdapter;
+import com.example.scanitgrocerystorehelper.adapters.ReminderSqlAdapter;
 import com.example.scanitgrocerystorehelper.models.ExpirationReminder;
 import com.example.scanitgrocerystorehelper.models.GeneralReminder;
 import com.example.scanitgrocerystorehelper.models.Reminder;
@@ -30,11 +31,15 @@ public class ReminderActivity extends DrawerActivity {
 
 	private ArrayList<Reminder> mReminders;
 	private ArrayAdapter<Reminder> mAdapter;
+	private ReminderSqlAdapter mSqlAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_reminder);
+		
+		mSqlAdapter = new ReminderSqlAdapter(this);
+		mSqlAdapter.open();
 
 		mReminders = new ArrayList<Reminder>();
 
@@ -51,6 +56,12 @@ public class ReminderActivity extends DrawerActivity {
 				return false;
 			}
 		});
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mSqlAdapter.close();
 	}
 
 	@Override
@@ -220,6 +231,8 @@ public class ReminderActivity extends DrawerActivity {
 
 	private void addReminder(Reminder r) {
 		mReminders.add(r);
+		mSqlAdapter.addReminder(r);
+		mSqlAdapter.setAllTasks(mReminders);
 		Collections.sort(mReminders);
 		mAdapter.notifyDataSetChanged();
 	}

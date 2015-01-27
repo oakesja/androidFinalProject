@@ -2,6 +2,9 @@ package com.example.scanitgrocerystorehelper.models;
 
 import java.util.GregorianCalendar;
 
+import com.example.scanitgrocerystorehelper.adapters.ReminderSqlAdapterKeys;
+
+import android.content.ContentValues;
 import android.content.Context;
 
 public class GeneralReminder extends Reminder {
@@ -25,5 +28,13 @@ public class GeneralReminder extends Reminder {
 	@Override
 	public String toString() {
 		return this.name + " - " + super.getFormmatedDate() + " " + getHour() + ":" + getMinute();
+	}
+
+	@Override
+	public ContentValues getContentValue() {
+		ContentValues row = super.getContentValue();
+		row.put(ReminderSqlAdapterKeys.KEY_NAME, this.name);
+		row.put(ReminderSqlAdapterKeys.KEY_TYPE, GeneralReminder.class.getName());
+		return row;
 	}
 }

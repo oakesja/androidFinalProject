@@ -2,7 +2,11 @@ package com.example.scanitgrocerystorehelper.models;
 
 import java.util.GregorianCalendar;
 
+import com.example.scanitgrocerystorehelper.adapters.ReminderSqlAdapterKeys;
+
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 
 public class ExpirationReminder extends Reminder {
 
@@ -26,5 +30,13 @@ public class ExpirationReminder extends Reminder {
 	public String toString() {
 		return "Your " + this.foodName + " expires on "
 				+ super.getFormmatedDate();
+	}
+
+	@Override
+	public ContentValues getContentValue() {
+		ContentValues row = super.getContentValue();
+		row.put(ReminderSqlAdapterKeys.KEY_NAME, this.foodName);
+		row.put(ReminderSqlAdapterKeys.KEY_TYPE, ExpirationReminder.class.getName());
+		return row;
 	}
 }
