@@ -50,6 +50,13 @@ public class ReminderSqlAdapter {
 		long rowId = mDatabase.insert(table, null, row);
 		reminder.setId(rowId);
 	}
+	
+	public void updateReminder(Reminder reminder) {
+		ContentValues row = reminder.getContentValue();
+		String table = mTableNameLookup.get(reminder.getClass());
+		String selection = ReminderSqlAdapterKeys.KEY_ID + " = " + reminder.getId();
+		mDatabase.update(table, row, selection, null);
+	}
 
 	public void deleteReminder(Reminder reminder) {
 		String table = mTableNameLookup.get(reminder.getClass());

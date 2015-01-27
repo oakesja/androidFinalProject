@@ -244,6 +244,10 @@ public class ReminderActivity extends DrawerActivity {
 
 	private void deleteReminder(Reminder r) {
 		mSqlAdapter.deleteReminder(r);
+	}
+	
+	public void updateReminder(Reminder r){
+		mSqlAdapter.updateReminder(r);
 		mSqlAdapter.setAllReminders(mReminders);
 		mAdapter.notifyDataSetChanged();
 	}
