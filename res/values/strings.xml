@@ -40,5 +40,9 @@
     <string name="price">Price</string>
     <string name="plus">+</string>
     <string name="coupon_message">Coupons and deal brought to you by Grocery Server</string>
+    <string name="expires_today">Your %s expires today</string>
+    <string name="expires_tomorrow">Your %s expires tomorrow</string>
+    <string name="expires_formated">Your %1$s expires in %2$d days</string>
+    <string name="expired_formated">Your %s is expired</string>
 
 </resources>

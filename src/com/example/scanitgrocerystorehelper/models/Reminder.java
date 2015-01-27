@@ -43,11 +43,11 @@ public abstract class Reminder implements Comparable<Reminder>,
 	}
 
 	public int getDay() {
-		return calendar.get(GregorianCalendar.DAY_OF_WEEK);
+		return calendar.get(GregorianCalendar.DATE);
 	}
 
 	public void setDay(int day) {
-		calendar.set(GregorianCalendar.DAY_OF_WEEK, day);
+		calendar.set(GregorianCalendar.DATE, day);
 	}
 
 	public int getYear() {
@@ -88,6 +88,14 @@ public abstract class Reminder implements Comparable<Reminder>,
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public Context getContext() {
+		return context;
+	}
+
+	public void setContext(Context context) {
+		this.context = context;
 	}
 
 	public String getFormmatedDate() {

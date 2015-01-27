@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import com.example.scanitgrocerystorehelper.DrawerActivity;
 import com.example.scanitgrocerystorehelper.models.ExpirationReminder;
 import com.example.scanitgrocerystorehelper.models.GeneralReminder;
 import com.example.scanitgrocerystorehelper.models.Reminder;
@@ -16,7 +15,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class ReminderSqlAdapter {
 
@@ -47,11 +45,9 @@ public class ReminderSqlAdapter {
 	}
 
 	public void addReminder(Reminder reminder) {
-		Log.d(DrawerActivity.SCANIT, reminder.getClass().getName());
 		ContentValues row = reminder.getContentValue();
 		String table = mTableNameLookup.get(reminder.getClass());
 		long rowId = mDatabase.insert(table, null, row);
-		Log.d(DrawerActivity.SCANIT, "id is " + rowId);
 		reminder.setId(rowId);
 	}
 
@@ -66,16 +62,14 @@ public class ReminderSqlAdapter {
 		reminders.clear();
 		for (Class<?> c : mTableNameLookup.keySet()) {
 			String table = mTableNameLookup.get(c);
-			Log.d(DrawerActivity.SCANIT, table + " " + c.getName());
 			Cursor cursor = mDatabase.query(table, columns, null, null, null,
 					null, null);
 			if (cursor == null || !cursor.moveToFirst()) {
 				return;
 			}
 			while (cursor.moveToNext()) {
-				Reminder r = getTaskFromCursor(ExpirationReminder.class, cursor);
+				Reminder r = getTaskFromCursor(c, cursor);
 				reminders.add(r);
-				Log.d(DrawerActivity.SCANIT, r.toString());
 			}
 		}
 		Collections.sort(reminders);
@@ -146,7 +140,6 @@ public class ReminderSqlAdapter {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			Log.d(DrawerActivity.SCANIT, "create tables");
 			db.execSQL(CREATE_STATEMENT1);
 			db.execSQL(CREATE_STATEMENT2);
 		}

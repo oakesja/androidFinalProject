@@ -2,11 +2,13 @@ package com.example.scanitgrocerystorehelper.models;
 
 import java.util.GregorianCalendar;
 
+import com.example.scanitgrocerystorehelper.DrawerActivity;
 import com.example.scanitgrocerystorehelper.adapters.ReminderSqlAdapterKeys;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 public class GeneralReminder extends Reminder {
 
