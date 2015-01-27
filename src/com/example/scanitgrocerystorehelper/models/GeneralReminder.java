@@ -1,5 +1,6 @@
 package com.example.scanitgrocerystorehelper.models;
 
+import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
 import com.example.scanitgrocerystorehelper.DrawerActivity;
@@ -18,6 +19,7 @@ public class GeneralReminder extends Reminder {
 			int hour, int minute, String name) {
 		super(context, new GregorianCalendar(year, month, day, hour, minute));
 		this.name = name;
+		Log.d(DrawerActivity.SCANIT, "" + hour + ":" + minute);
 	}
 
 	public GeneralReminder() {
@@ -33,8 +35,9 @@ public class GeneralReminder extends Reminder {
 
 	@Override
 	public String toString() {
-		return this.name + " - " + super.getFormmatedDate() + " " + getHour()
-				+ ":" + getMinute();
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyy HH:mm");
+		sdf.setCalendar(getCalendar());
+		return this.name + " - " + sdf.format(getCalendar().getTime());
 	}
 
 	@Override

@@ -59,11 +59,11 @@ public abstract class Reminder implements Comparable<Reminder>,
 	}
 
 	public int getHour() {
-		return calendar.get(GregorianCalendar.HOUR);
+		return calendar.get(GregorianCalendar.HOUR_OF_DAY);
 	}
 
 	public void setHour(int hour) {
-		calendar.set(GregorianCalendar.HOUR, hour);
+		calendar.set(GregorianCalendar.HOUR_OF_DAY, hour);
 	}
 
 	public int getMinute() {
@@ -96,18 +96,6 @@ public abstract class Reminder implements Comparable<Reminder>,
 
 	public void setContext(Context context) {
 		this.context = context;
-	}
-
-	public String getFormmatedDate() {
-		Locale l = context.getResources().getConfiguration().locale;
-		StringBuilder sb = new StringBuilder();
-		sb.append(calendar.getDisplayName(GregorianCalendar.MONTH,
-				GregorianCalendar.SHORT, l));
-		sb.append(" ");
-		sb.append(getDay());
-		sb.append(",");
-		sb.append(getYear());
-		return sb.toString();
 	}
 
 	@Override

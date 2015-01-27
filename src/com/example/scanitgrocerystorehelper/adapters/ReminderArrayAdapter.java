@@ -58,10 +58,10 @@ public class ReminderArrayAdapter extends ArrayAdapter<Reminder> {
 		// try to abstract this out somehow
 		if(r instanceof ExpirationReminder){
 			ExpirationReminder expR = (ExpirationReminder)r;
-			builder.setContentText(mContext.getString(R.string.notifcation_text_expiration, expR.getFoodName()));
+			builder.setContentText(expR.toString());
 		} else {
 			GeneralReminder genR = (GeneralReminder)r;
-			builder.setContentText(mContext.getString(R.string.notifcation_text_reminder, genR.getName(), genR.getFormmatedDate()));
+			builder.setContentText(genR.toString());
 		}
 		builder.setAutoCancel(true);
 		

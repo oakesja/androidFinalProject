@@ -2,6 +2,7 @@ package com.example.scanitgrocerystorehelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 
 import com.example.scanitgrocerystorehelper.adapters.ReminderArrayAdapter;
 import com.example.scanitgrocerystorehelper.adapters.ReminderSqlAdapter;
@@ -137,6 +138,10 @@ public class ReminderActivity extends DrawerActivity {
 				final TimePicker timePicker = (TimePicker) v
 						.findViewById(R.id.reminderTimePicker);
 				timePicker.setVisibility(TimePicker.INVISIBLE);
+				
+				final DatePicker datePicker = (DatePicker) v
+						.findViewById(R.id.reminderDatePicker);
+				datePicker.setMinDate(System.currentTimeMillis() - 1000);
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						getActivity());
@@ -147,8 +152,6 @@ public class ReminderActivity extends DrawerActivity {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						DatePicker datePicker = (DatePicker) v
-								.findViewById(R.id.reminderDatePicker);
 						int month = datePicker.getMonth();
 						int day = datePicker.getDayOfMonth();
 						int year = datePicker.getYear();
@@ -177,6 +180,10 @@ public class ReminderActivity extends DrawerActivity {
 
 				final TimePicker timePicker = (TimePicker) v
 						.findViewById(R.id.reminderTimePicker);
+				
+				final DatePicker datePicker = (DatePicker) v
+						.findViewById(R.id.reminderDatePicker);
+				datePicker.setMinDate(System.currentTimeMillis() - 1000);
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						getActivity());
@@ -187,14 +194,13 @@ public class ReminderActivity extends DrawerActivity {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						DatePicker datePicker = (DatePicker) v
-								.findViewById(R.id.reminderDatePicker);
 						int month = datePicker.getMonth();
 						int day = datePicker.getDayOfMonth();
 						int year = datePicker.getYear();
 						int hour = timePicker.getCurrentHour();
 						int minute = timePicker.getCurrentMinute();
 						String name = editName.getText().toString();
+						Log.d(DrawerActivity.SCANIT, "" + hour + ":" + minute);
 						GeneralReminder reminder = new GeneralReminder(
 								getActivity(), month, day, year, hour, minute,
 								name);
