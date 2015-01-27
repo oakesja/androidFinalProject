@@ -1,20 +1,16 @@
 package com.example.scanitgrocerystorehelper.models;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import com.example.scanitgrocerystorehelper.DrawerActivity;
 import com.example.scanitgrocerystorehelper.adapters.ReminderSqlAdapterKeys;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 
-public abstract class Reminder implements Comparable<Reminder>, ContentValueizer {
+public abstract class Reminder implements Comparable<Reminder>,
+		ContentValueizer {
 
 	private Context context;
 	private GregorianCalendar calendar;
@@ -25,6 +21,9 @@ public abstract class Reminder implements Comparable<Reminder>, ContentValueizer
 		this.calendar = calendar;
 		this.willNotify = false;
 		this.context = context;
+	}
+
+	public Reminder() {
 	}
 
 	public GregorianCalendar getCalendar() {
@@ -108,7 +107,7 @@ public abstract class Reminder implements Comparable<Reminder>, ContentValueizer
 		GregorianCalendar anotherDueDate = another.getCalendar();
 		return calendar.compareTo(anotherDueDate);
 	}
-	
+
 	public ContentValues getContentValue() {
 		ContentValues row = new ContentValues();
 		row.put(ReminderSqlAdapterKeys.KEY_YEAR, getYear());
@@ -119,37 +118,23 @@ public abstract class Reminder implements Comparable<Reminder>, ContentValueizer
 		row.put(ReminderSqlAdapterKeys.KEY_NOTIFY, isWillNotify());
 		return row;
 	}
-	
-	public static final Reminder getFromCursor(Context context, Cursor cursor) {
-		long id = cursor.getLong(cursor.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_ID));
-		int year = cursor.getInt(cursor.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_YEAR));
-		int month = cursor.getInt(cursor.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_MONTH));
-		int date = cursor.getInt(cursor.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_DAY));
-		int hour = cursor.getInt(cursor.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_HOUR));
-		int minute = cursor.getInt(cursor.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_MINUTE));
-		boolean notify = (cursor.getInt(cursor.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_NOTIFY)) != 0);
-		String name = cursor.getString(cursor.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_NAME));
-		String type = cursor.getString(cursor.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_TYPE));
-		try {
-			Class<?> reminderType = Class.forName(type);
-			Log.d(DrawerActivity.SCANIT, reminderType.toString());
-			Constructor<?> ctor = reminderType.getConstructor(String.class);
-			Object object = ctor.newInstance(name);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-//		reminderType.
-//		reminder.setId(id);
-		return null;
+
+	public void setFromCursor(Context context, Cursor cursor) {
+		this.context = context;
+		this.id = cursor.getLong(cursor
+				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_ID));
+		int year = cursor.getInt(cursor
+				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_YEAR));
+		int month = cursor.getInt(cursor
+				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_MONTH));
+		int day = cursor.getInt(cursor
+				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_DAY));
+		int hour = cursor.getInt(cursor
+				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_HOUR));
+		int minute = cursor.getInt(cursor
+				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_MINUTE));
+		this.willNotify = (cursor.getInt(cursor
+				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_NOTIFY)) != 0);
+		this.calendar = new GregorianCalendar(year, month, day, hour, minute);
 	}
 }

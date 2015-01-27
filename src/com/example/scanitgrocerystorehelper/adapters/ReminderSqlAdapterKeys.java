@@ -8,7 +8,5 @@ public class ReminderSqlAdapterKeys {
 	public static final String KEY_DAY = "day";
 	public static final String KEY_HOUR = "hour";
 	public static final String KEY_MINUTE = "minute";
-	public static final String KEY_TYPE = "type";
 	public static final String KEY_NOTIFY = "notify";
-
 }

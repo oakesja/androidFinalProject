@@ -12,6 +12,10 @@ public class ExpirationReminder extends Reminder {
 
 	private String foodName;
 
+	public ExpirationReminder() {
+		super();
+	}
+
 	public ExpirationReminder(Context context, int month, int day, int year,
 			String foodName) {
 		super(context, new GregorianCalendar(year, month, day));
@@ -36,7 +40,15 @@ public class ExpirationReminder extends Reminder {
 	public ContentValues getContentValue() {
 		ContentValues row = super.getContentValue();
 		row.put(ReminderSqlAdapterKeys.KEY_NAME, this.foodName);
-		row.put(ReminderSqlAdapterKeys.KEY_TYPE, ExpirationReminder.class.getName());
 		return row;
+	}
+
+	@Override
+	public Reminder getFromCursor(Context context, Cursor cursor) {
+		super.setFromCursor(context, cursor);
+		String name = cursor.getString(cursor
+				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_NAME));
+		this.foodName = name;
+		return this;
 	}
 }

@@ -37,11 +37,12 @@ public class ReminderActivity extends DrawerActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_reminder);
-		
-		mSqlAdapter = new ReminderSqlAdapter(this);
-		mSqlAdapter.open();
 
 		mReminders = new ArrayList<Reminder>();
+
+		mSqlAdapter = new ReminderSqlAdapter(this);
+		mSqlAdapter.open();
+		mSqlAdapter.setAllReminders(mReminders);
 
 		mAdapter = new ReminderArrayAdapter(this, mReminders);
 		ListView listview = (ListView) findViewById(R.id.reminders);
@@ -57,7 +58,7 @@ public class ReminderActivity extends DrawerActivity {
 			}
 		});
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -230,16 +231,14 @@ public class ReminderActivity extends DrawerActivity {
 	}
 
 	private void addReminder(Reminder r) {
-		mReminders.add(r);
 		mSqlAdapter.addReminder(r);
-		mSqlAdapter.setAllTasks(mReminders);
-		Collections.sort(mReminders);
+		mSqlAdapter.setAllReminders(mReminders);
 		mAdapter.notifyDataSetChanged();
 	}
 
 	private void deleteReminder(Reminder r) {
-		mReminders.remove(r);
-		Collections.sort(mReminders);
+		mSqlAdapter.deleteReminder(r);
+		mSqlAdapter.setAllReminders(mReminders);
 		mAdapter.notifyDataSetChanged();
 	}
 }
