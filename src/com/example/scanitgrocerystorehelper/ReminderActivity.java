@@ -137,7 +137,7 @@ public class ReminderActivity extends DrawerActivity {
 
 				final TimePicker timePicker = (TimePicker) v
 						.findViewById(R.id.reminderTimePicker);
-				timePicker.setVisibility(TimePicker.INVISIBLE);
+				timePicker.setVisibility(TimePicker.GONE);
 				
 				final DatePicker datePicker = (DatePicker) v
 						.findViewById(R.id.reminderDatePicker);
