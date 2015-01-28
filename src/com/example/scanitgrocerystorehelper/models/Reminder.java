@@ -10,7 +10,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 public abstract class Reminder implements Comparable<Reminder>,
-		ContentValueizer {
+		ContentValueizer, Notifcationizer {
 
 	private Context context;
 	private GregorianCalendar calendar;

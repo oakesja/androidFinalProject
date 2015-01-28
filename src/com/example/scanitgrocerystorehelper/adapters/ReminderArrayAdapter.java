@@ -52,24 +52,9 @@ public class ReminderArrayAdapter extends ArrayAdapter<Reminder> {
 	}
 
 	private void handleNotification(Reminder r) {
-		// Notification.Builder builder = new Notification.Builder(mContext);
-		// builder.setSmallIcon(R.drawable.ic_launcher);
-		// builder.setContentTitle(mContext.getString(R.string.notifcation_title));
-		// builder.setContentText(r.toString());
-		// builder.setAutoCancel(true);
-		//
-		// Intent resultIntent = new Intent(mContext, ReminderActivity.class);
-		// TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
-		// stackBuilder.addParentStack(ReminderActivity.class);
-		// stackBuilder.addNextIntent(resultIntent);
-		// PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
-		// PendingIntent.FLAG_UPDATE_CURRENT);
-		// builder.setContentIntent(resultPendingIntent);
-		// NotificationManager notifcationManger = (NotificationManager)
-		// mContext
-		// .getSystemService(Context.NOTIFICATION_SERVICE);
-		// notifcationManger.notify((int) r.getId(), builder.build());
 		Intent myIntent = new Intent(mContext, AlarmReceiver.class);
+		myIntent.putExtra(AlarmReceiver.REMINDER_INTENT_KEY, r.getNotifcationText());
+		Log.d(DrawerActivity.SCANIT,myIntent.getStringExtra(AlarmReceiver.REMINDER_INTENT_KEY));
 
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext,
 				(int) r.getId(), myIntent, 0);

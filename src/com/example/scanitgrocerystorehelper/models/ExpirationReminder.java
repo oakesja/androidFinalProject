@@ -68,4 +68,9 @@ public class ExpirationReminder extends Reminder {
 		this.foodName = name;
 		return this;
 	}
+
+	@Override
+	public String getNotifcationText() {
+		return toString();
+	}
 }

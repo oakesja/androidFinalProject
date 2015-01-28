@@ -55,4 +55,11 @@ public class GeneralReminder extends Reminder {
 		this.name = name;
 		return this;
 	}
+
+	@Override
+	public String getNotifcationText() {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		sdf.setCalendar(getCalendar());
+		return this.name + " @ " + sdf.format(getCalendar().getTime());
+	}
 }
