@@ -71,24 +71,25 @@ public class ReminderArrayAdapter extends ArrayAdapter<Reminder> {
 		// notifcationManger.notify((int) r.getId(), builder.build());
 		Intent myIntent = new Intent(mContext, AlarmReceiver.class);
 
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, (int) r.getId(),
-				myIntent, 0);
-		
-		if(pendingIntent != null){
-			Log.d(DrawerActivity.SCANIT, "alarm already created");
-		}
-
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext,
+				(int) r.getId(), myIntent, 0);
 		AlarmManager alarmManager = (AlarmManager) mContext
 				.getSystemService(Service.ALARM_SERVICE);
-		
-		GregorianCalendar gc = r.getCalendar();
-		gc.set(GregorianCalendar.SECOND, 0);
 
-		alarmManager.set(AlarmManager.RTC, gc.getTimeInMillis(),
-				pendingIntent);
-		Log.d(DrawerActivity.SCANIT, "setup alarm manager");
-		Log.d(DrawerActivity.SCANIT, "calendar : " + gc.getTimeInMillis() + " system " + System.currentTimeMillis());
+		if (pendingIntent != null && !r.isWillNotify()) {
+			Log.d(DrawerActivity.SCANIT, "deleting alarm");
 
+			alarmManager.cancel(pendingIntent);
+			pendingIntent.cancel();
+		} else if (r.isWillNotify()) {
+			Log.d(DrawerActivity.SCANIT, "creating alarm");
+
+			GregorianCalendar gc = r.getCalendar();
+			gc.set(GregorianCalendar.SECOND, 0);
+
+			alarmManager.set(AlarmManager.RTC, gc.getTimeInMillis(),
+					pendingIntent);
+		}
 	}
 
 }
