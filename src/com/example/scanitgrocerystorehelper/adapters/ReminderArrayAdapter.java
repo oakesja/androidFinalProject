@@ -1,19 +1,20 @@
 package com.example.scanitgrocerystorehelper.adapters;
 
+import java.util.GregorianCalendar;
 import java.util.List;
 
+import com.example.scanitgrocerystorehelper.AlarmReceiver;
+import com.example.scanitgrocerystorehelper.DrawerActivity;
 import com.example.scanitgrocerystorehelper.R;
 import com.example.scanitgrocerystorehelper.ReminderActivity;
-import com.example.scanitgrocerystorehelper.models.ExpirationReminder;
-import com.example.scanitgrocerystorehelper.models.GeneralReminder;
 import com.example.scanitgrocerystorehelper.models.Reminder;
 
-import android.app.Notification;
-import android.app.NotificationManager;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -42,33 +43,52 @@ public class ReminderArrayAdapter extends ArrayAdapter<Reminder> {
 			@Override
 			public void onClick(View v) {
 				r.setWillNotify(!r.isWillNotify());
-				if (r.isWillNotify()) {
-					createNotification(r);
-				}
-				ReminderActivity ra = (ReminderActivity)mContext;
+				handleNotification(r);
+				ReminderActivity ra = (ReminderActivity) mContext;
 				ra.updateReminder(r);
 			}
 		});
 		return v;
 	}
 
-	private void createNotification(Reminder r) {
-		Notification.Builder builder = new Notification.Builder(mContext);
-		builder.setSmallIcon(R.drawable.ic_launcher);
-		builder.setContentTitle(mContext.getString(R.string.notifcation_title));
-		builder.setContentText(r.toString());
-		builder.setAutoCancel(true);
+	private void handleNotification(Reminder r) {
+		// Notification.Builder builder = new Notification.Builder(mContext);
+		// builder.setSmallIcon(R.drawable.ic_launcher);
+		// builder.setContentTitle(mContext.getString(R.string.notifcation_title));
+		// builder.setContentText(r.toString());
+		// builder.setAutoCancel(true);
+		//
+		// Intent resultIntent = new Intent(mContext, ReminderActivity.class);
+		// TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+		// stackBuilder.addParentStack(ReminderActivity.class);
+		// stackBuilder.addNextIntent(resultIntent);
+		// PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
+		// PendingIntent.FLAG_UPDATE_CURRENT);
+		// builder.setContentIntent(resultPendingIntent);
+		// NotificationManager notifcationManger = (NotificationManager)
+		// mContext
+		// .getSystemService(Context.NOTIFICATION_SERVICE);
+		// notifcationManger.notify((int) r.getId(), builder.build());
+		Intent myIntent = new Intent(mContext, AlarmReceiver.class);
 
-		Intent resultIntent = new Intent(mContext, ReminderActivity.class);
-		TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
-		stackBuilder.addParentStack(ReminderActivity.class);
-		stackBuilder.addNextIntent(resultIntent);
-		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
-				PendingIntent.FLAG_UPDATE_CURRENT);
-		builder.setContentIntent(resultPendingIntent);
-		NotificationManager notifcationManger = (NotificationManager) mContext
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-		notifcationManger.notify((int) r.getId(), builder.build());
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, (int) r.getId(),
+				myIntent, 0);
+		
+		if(pendingIntent != null){
+			Log.d(DrawerActivity.SCANIT, "alarm already created");
+		}
+
+		AlarmManager alarmManager = (AlarmManager) mContext
+				.getSystemService(Service.ALARM_SERVICE);
+		
+		GregorianCalendar gc = r.getCalendar();
+		gc.set(GregorianCalendar.SECOND, 0);
+
+		alarmManager.set(AlarmManager.RTC, gc.getTimeInMillis(),
+				pendingIntent);
+		Log.d(DrawerActivity.SCANIT, "setup alarm manager");
+		Log.d(DrawerActivity.SCANIT, "calendar : " + gc.getTimeInMillis() + " system " + System.currentTimeMillis());
+
 	}
 
 }
