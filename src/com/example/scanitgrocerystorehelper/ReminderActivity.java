@@ -34,6 +34,7 @@ public class ReminderActivity extends DrawerActivity {
 	private ArrayAdapter<Reminder> mAdapter;
 	private ReminderSqlAdapter mSqlAdapter;
 
+	// TODO add edit capability
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -123,7 +124,7 @@ public class ReminderActivity extends DrawerActivity {
 		df.show(getFragmentManager(), "reminder type");
 	}
 
-	// try to abstract common parts between the two dialogs
+	// TODO try to abstract common parts between the two dialogs
 	private void enterExpirationReminderInfoDialog() {
 		DialogFragment df = new DialogFragment() {
 			@Override
