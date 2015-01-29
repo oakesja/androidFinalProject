@@ -26,9 +26,6 @@ public class NotificationService extends Service {
 				.getStringExtra(AlarmReceiver.REMINDER_INTENT_KEY);
 		Log.d(DrawerActivity.SCANIT, "started service " + reminderName);
 		super.onStartCommand(intent, flags, startId);
-		NotificationManager notManager = (NotificationManager) this
-				.getApplicationContext().getSystemService(
-						Activity.NOTIFICATION_SERVICE);
 
 		Intent resultIntent = new Intent(this.getApplicationContext(),
 				ReminderActivity.class);

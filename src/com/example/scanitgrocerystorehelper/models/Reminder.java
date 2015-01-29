@@ -1,7 +1,6 @@
 package com.example.scanitgrocerystorehelper.models;
 
 import java.util.GregorianCalendar;
-import java.util.Locale;
 
 import com.example.scanitgrocerystorehelper.adapters.ReminderSqlAdapterKeys;
 

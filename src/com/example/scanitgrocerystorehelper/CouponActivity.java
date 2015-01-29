@@ -15,7 +15,7 @@ public class CouponActivity extends DrawerActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_coupon);
 		
-		// need to manipulate url above with Zipcode and specified lists or single item
+		// TODO need to manipulate url above with Zipcode and specified lists or single item
 		// need to validate the url after each item adition to it to make sure it is still valid
 		// replace spaces with %20
 		try {
