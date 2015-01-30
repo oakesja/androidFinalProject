@@ -4,7 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-public interface ContentValueizer {
+public interface IContentValueizer {
 	public ContentValues getContentValue();
-	public Reminder getFromCursor(Context context, Cursor cursor);
+	// TODO consider removing context here
+	public Object getFromCursor(Context context, Cursor cursor);
 }

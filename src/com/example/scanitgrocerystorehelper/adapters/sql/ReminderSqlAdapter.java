@@ -1,4 +1,4 @@
-package com.example.scanitgrocerystorehelper.adapters;
+package com.example.scanitgrocerystorehelper.adapters.sql;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import com.example.scanitgrocerystorehelper.DrawerActivity;
 import com.example.scanitgrocerystorehelper.models.ExpirationReminder;
 import com.example.scanitgrocerystorehelper.models.GeneralReminder;
 import com.example.scanitgrocerystorehelper.models.Reminder;
@@ -15,13 +16,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class ReminderSqlAdapter {
 
-	private static final String DATABASE_NAME = "reminders.db";
 	private static final String GENERAL_TABLE = "general";
 	private static final String EXP_TABLE = "exp";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	private SQLiteDatabase mDatabase;
 	private SQLiteOpenHelper mHelper;
@@ -50,18 +51,18 @@ public class ReminderSqlAdapter {
 		long rowId = mDatabase.insert(table, null, row);
 		reminder.setId(rowId);
 	}
-	
+
 	public void updateReminder(Reminder reminder) {
 		ContentValues row = reminder.getContentValue();
 		String table = mTableNameLookup.get(reminder.getClass());
-		String selection = ReminderSqlAdapterKeys.KEY_ID + " = " + reminder.getId();
+		String selection = SqlAdapterKeys.KEY_ID + " = " + reminder.getId();
 		mDatabase.update(table, row, selection, null);
 	}
 
 	public void deleteReminder(Reminder reminder) {
 		String table = mTableNameLookup.get(reminder.getClass());
-		mDatabase.delete(table, ReminderSqlAdapterKeys.KEY_ID + " = "
-				+ reminder.getId(), null);
+		mDatabase.delete(table,
+				SqlAdapterKeys.KEY_ID + " = " + reminder.getId(), null);
 	}
 
 	public void setAllReminders(ArrayList<Reminder> reminders) {
@@ -71,7 +72,7 @@ public class ReminderSqlAdapter {
 			String table = mTableNameLookup.get(c);
 			Cursor cursor = mDatabase.query(table, columns, null, null, null,
 					null, null);
-			if (cursor == null || !cursor.moveToFirst()) {
+			if (cursor == null) {
 				return;
 			}
 			while (cursor.moveToNext()) {
@@ -82,11 +83,32 @@ public class ReminderSqlAdapter {
 		Collections.sort(reminders);
 	}
 
+	public ArrayList<Reminder> getAllRemindersToNotify() {
+		ArrayList<Reminder> reminders = new ArrayList<Reminder>();
+		for (Class<?> c : mTableNameLookup.keySet()) {
+			Log.d(DrawerActivity.SCANIT, "get all reminders for " + c.toString());
+			String table = mTableNameLookup.get(c);
+			Cursor cursor = mDatabase.query(table, null,
+					SqlAdapterKeys.KEY_NOTIFY + "=1", null, null, null, null);
+			if (cursor == null) {
+				Log.d(DrawerActivity.SCANIT, "none found");
+				continue;
+			}
+			while (cursor.moveToNext()) {
+				Reminder r = getTaskFromCursor(c, cursor);
+				Log.d(DrawerActivity.SCANIT, "found " + r);
+				reminders.add(r);
+			}
+		}
+		return reminders;
+	}
+
 	public Reminder getTaskFromCursor(Class<?> c, Cursor cursor) {
 		Object t;
 		try {
 			t = c.newInstance();
-			Method  method = c.getDeclaredMethod("getFromCursor", Context.class, Cursor.class);
+			Method method = c.getDeclaredMethod("getFromCursor", Context.class,
+					Cursor.class);
 			return (Reminder) method.invoke(t, mContext, cursor);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
@@ -102,6 +124,7 @@ public class ReminderSqlAdapter {
 		return null;
 	}
 
+	// TODO abstract this out if possible
 	private static class TaskDbHelper extends SQLiteOpenHelper {
 		private static final String DROP_STATEMENT1 = "DROP TABLE IF EXISTS "
 				+ GENERAL_TABLE;
@@ -111,15 +134,16 @@ public class ReminderSqlAdapter {
 		static {
 			StringBuilder sb = new StringBuilder();
 			sb.append("CREATE TABLE " + GENERAL_TABLE + "(");
-			sb.append(ReminderSqlAdapterKeys.KEY_ID
+			sb.append(SqlAdapterKeys.KEY_ID
 					+ " integer primary key autoincrement, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_NAME + " text, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_YEAR + " integer, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_MONTH + " integer, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_DAY + " integer, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_HOUR + " integer, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_MINUTE + " integer, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_NOTIFY + " integer ");
+			sb.append(SqlAdapterKeys.KEY_NAME + " text, ");
+			sb.append(SqlAdapterKeys.KEY_YEAR + " integer, ");
+			sb.append(SqlAdapterKeys.KEY_MONTH + " integer, ");
+			sb.append(SqlAdapterKeys.KEY_DAY + " integer, ");
+			sb.append(SqlAdapterKeys.KEY_HOUR + " integer, ");
+			sb.append(SqlAdapterKeys.KEY_MINUTE + " integer, ");
+			sb.append(SqlAdapterKeys.KEY_NOTIFY + " integer, ");
+			sb.append(SqlAdapterKeys.KEY_PENDINGINTENTID + " integer ");
 			sb.append(")");
 			CREATE_STATEMENT1 = sb.toString();
 		}
@@ -128,21 +152,22 @@ public class ReminderSqlAdapter {
 		static {
 			StringBuilder sb = new StringBuilder();
 			sb.append("CREATE TABLE " + EXP_TABLE + "(");
-			sb.append(ReminderSqlAdapterKeys.KEY_ID
+			sb.append(SqlAdapterKeys.KEY_ID
 					+ " integer primary key autoincrement, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_NAME + " text, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_YEAR + " integer, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_MONTH + " integer, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_DAY + " integer, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_HOUR + " integer, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_MINUTE + " integer, ");
-			sb.append(ReminderSqlAdapterKeys.KEY_NOTIFY + " integer ");
+			sb.append(SqlAdapterKeys.KEY_NAME + " text, ");
+			sb.append(SqlAdapterKeys.KEY_YEAR + " integer, ");
+			sb.append(SqlAdapterKeys.KEY_MONTH + " integer, ");
+			sb.append(SqlAdapterKeys.KEY_DAY + " integer, ");
+			sb.append(SqlAdapterKeys.KEY_HOUR + " integer, ");
+			sb.append(SqlAdapterKeys.KEY_MINUTE + " integer, ");
+			sb.append(SqlAdapterKeys.KEY_NOTIFY + " integer, ");
+			sb.append(SqlAdapterKeys.KEY_PENDINGINTENTID + " integer ");
 			sb.append(")");
 			CREATE_STATEMENT2 = sb.toString();
 		}
 
 		public TaskDbHelper(Context context) {
-			super(context, DATABASE_NAME, null, DATABASE_VERSION);
+			super(context, SqlAdapterKeys.DATABASE_NAME, null, DATABASE_VERSION);
 		}
 
 		@Override

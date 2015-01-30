@@ -1,6 +1,6 @@
 package com.example.scanitgrocerystorehelper.models;
 
-public interface Notifcationizer {
+public interface INotifcationizer {
 
 	String getNotifcationText();
 }

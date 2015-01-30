@@ -4,11 +4,13 @@ import java.util.GregorianCalendar;
 
 import com.example.scanitgrocerystorehelper.DrawerActivity;
 import com.example.scanitgrocerystorehelper.R;
-import com.example.scanitgrocerystorehelper.adapters.ReminderSqlAdapterKeys;
+import com.example.scanitgrocerystorehelper.adapters.sql.SqlAdapterKeys;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 public class ExpirationReminder extends Reminder {
@@ -56,7 +58,7 @@ public class ExpirationReminder extends Reminder {
 	@Override
 	public ContentValues getContentValue() {
 		ContentValues row = super.getContentValue();
-		row.put(ReminderSqlAdapterKeys.KEY_NAME, this.foodName);
+		row.put(SqlAdapterKeys.KEY_NAME, this.foodName);
 		return row;
 	}
 
@@ -64,7 +66,7 @@ public class ExpirationReminder extends Reminder {
 	public Reminder getFromCursor(Context context, Cursor cursor) {
 		super.setFromCursor(context, cursor);
 		String name = cursor.getString(cursor
-				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_NAME));
+				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_NAME));
 		this.foodName = name;
 		return this;
 	}
@@ -72,5 +74,34 @@ public class ExpirationReminder extends Reminder {
 	@Override
 	public String getNotifcationText() {
 		return toString();
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	public static final Parcelable.Creator<ExpirationReminder> CREATOR = new Parcelable.Creator<ExpirationReminder>() {
+		public ExpirationReminder createFromParcel(Parcel in) {
+			Log.d(DrawerActivity.SCANIT, "expiration reminder create from parcel");
+			return new ExpirationReminder(in);
+		}
+
+		public ExpirationReminder[] newArray(int size) {
+			return new ExpirationReminder[size];
+		}
+	};
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		super.writeToParcel(dest, flags);
+		dest.writeString(foodName);
+		Log.d(DrawerActivity.SCANIT, "expiration reminder write to parcel");
+	}
+
+	public ExpirationReminder(Parcel in) {
+		super(in);
+		foodName = in.readString();
+		Log.d(DrawerActivity.SCANIT, "expiration reminder parcel constructor " + foodName);
 	}
 }

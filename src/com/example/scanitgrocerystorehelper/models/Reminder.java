@@ -2,27 +2,60 @@ package com.example.scanitgrocerystorehelper.models;
 
 import java.util.GregorianCalendar;
 
-import com.example.scanitgrocerystorehelper.adapters.ReminderSqlAdapterKeys;
+import com.example.scanitgrocerystorehelper.DrawerActivity;
+import com.example.scanitgrocerystorehelper.adapters.sql.SqlAdapterKeys;
+import com.example.scanitgrocerystorehelper.utils.SharedPreferencesManager;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 
 public abstract class Reminder implements Comparable<Reminder>,
-		ContentValueizer, Notifcationizer {
+		IContentValueizer, INotifcationizer, Parcelable {
 
 	private Context context;
 	private GregorianCalendar calendar;
 	private boolean willNotify;
 	private long id;
+	private int pendingIntentId;
 
 	public Reminder(Context context, GregorianCalendar calendar) {
 		this.calendar = calendar;
 		this.willNotify = false;
 		this.context = context;
+		this.pendingIntentId = -1;
 	}
 
 	public Reminder() {
+	}
+
+	public Reminder(Parcel in) {
+		Log.d(DrawerActivity.SCANIT, "reminder create from parcel");
+		this.id = in.readInt();
+		int year = in.readInt();
+		int month = in.readInt();
+		int day = in.readInt();
+		int hour = in.readInt();
+		int minute = in.readInt();
+		this.calendar = new GregorianCalendar(year, month, day, hour, minute);
+		this.willNotify = in.readInt() != 0;
+		this.pendingIntentId = in.readInt();
+	}
+
+	public void writeToParcel(Parcel out, int flags) {
+		Log.d(DrawerActivity.SCANIT, "reminder write to parcel");
+		out.writeInt((int) this.id);
+		out.writeInt(getYear());
+		out.writeInt(getMonth());
+		out.writeInt(getDay());
+		out.writeInt(getHour());
+		out.writeInt(getMinute());
+		int bool = isWillNotify() ? 1 : 0;
+		out.writeInt(bool);
+		out.writeInt(this.pendingIntentId);
 	}
 
 	public GregorianCalendar getCalendar() {
@@ -97,6 +130,18 @@ public abstract class Reminder implements Comparable<Reminder>,
 		this.context = context;
 	}
 
+	public void resetPendintIntentId(){
+		pendingIntentId = -1;
+	}
+	
+	public int getPendingIntentId() {
+		if (pendingIntentId == -1) {
+			pendingIntentId = SharedPreferencesManager
+					.getNextPendingIntentId(getContext());
+		}
+		return pendingIntentId;
+	}
+
 	@Override
 	public int compareTo(Reminder another) {
 		GregorianCalendar anotherDueDate = another.getCalendar();
@@ -105,31 +150,34 @@ public abstract class Reminder implements Comparable<Reminder>,
 
 	public ContentValues getContentValue() {
 		ContentValues row = new ContentValues();
-		row.put(ReminderSqlAdapterKeys.KEY_YEAR, getYear());
-		row.put(ReminderSqlAdapterKeys.KEY_MONTH, getMonth());
-		row.put(ReminderSqlAdapterKeys.KEY_DAY, getDay());
-		row.put(ReminderSqlAdapterKeys.KEY_HOUR, getHour());
-		row.put(ReminderSqlAdapterKeys.KEY_MINUTE, getMinute());
-		row.put(ReminderSqlAdapterKeys.KEY_NOTIFY, isWillNotify());
+		row.put(SqlAdapterKeys.KEY_YEAR, getYear());
+		row.put(SqlAdapterKeys.KEY_MONTH, getMonth());
+		row.put(SqlAdapterKeys.KEY_DAY, getDay());
+		row.put(SqlAdapterKeys.KEY_HOUR, getHour());
+		row.put(SqlAdapterKeys.KEY_MINUTE, getMinute());
+		row.put(SqlAdapterKeys.KEY_NOTIFY, isWillNotify());
+		row.put(SqlAdapterKeys.KEY_PENDINGINTENTID, this.pendingIntentId);
 		return row;
 	}
 
 	public void setFromCursor(Context context, Cursor cursor) {
 		this.context = context;
 		this.id = cursor.getLong(cursor
-				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_ID));
+				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_ID));
 		int year = cursor.getInt(cursor
-				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_YEAR));
+				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_YEAR));
 		int month = cursor.getInt(cursor
-				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_MONTH));
+				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_MONTH));
 		int day = cursor.getInt(cursor
-				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_DAY));
+				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_DAY));
 		int hour = cursor.getInt(cursor
-				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_HOUR));
+				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_HOUR));
 		int minute = cursor.getInt(cursor
-				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_MINUTE));
+				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_MINUTE));
 		this.willNotify = (cursor.getInt(cursor
-				.getColumnIndexOrThrow(ReminderSqlAdapterKeys.KEY_NOTIFY)) != 0);
+				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_NOTIFY)) != 0);
 		this.calendar = new GregorianCalendar(year, month, day, hour, minute);
+		this.pendingIntentId = cursor.getInt(cursor
+				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_PENDINGINTENTID));
 	}
 }
