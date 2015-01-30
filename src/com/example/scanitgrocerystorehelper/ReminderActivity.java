@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.GregorianCalendar;
 
 import com.example.scanitgrocerystorehelper.adapters.ReminderArrayAdapter;
-import com.example.scanitgrocerystorehelper.adapters.ReminderSqlAdapter;
+import com.example.scanitgrocerystorehelper.adapters.sql.ReminderSqlAdapter;
 import com.example.scanitgrocerystorehelper.models.ExpirationReminder;
 import com.example.scanitgrocerystorehelper.models.GeneralReminder;
 import com.example.scanitgrocerystorehelper.models.Reminder;

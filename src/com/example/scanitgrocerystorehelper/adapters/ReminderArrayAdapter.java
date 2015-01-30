@@ -3,11 +3,11 @@ package com.example.scanitgrocerystorehelper.adapters;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import com.example.scanitgrocerystorehelper.AlarmReceiver;
 import com.example.scanitgrocerystorehelper.DrawerActivity;
 import com.example.scanitgrocerystorehelper.R;
 import com.example.scanitgrocerystorehelper.ReminderActivity;
 import com.example.scanitgrocerystorehelper.models.Reminder;
+import com.example.scanitgrocerystorehelper.receivers.AlarmReceiver;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -52,12 +52,12 @@ public class ReminderArrayAdapter extends ArrayAdapter<Reminder> {
 	}
 
 	private void handleNotification(Reminder r) {
+		Log.d(DrawerActivity.SCANIT, "handle notification");
 		Intent myIntent = new Intent(mContext, AlarmReceiver.class);
-		myIntent.putExtra(AlarmReceiver.REMINDER_INTENT_KEY, r.getNotifcationText());
-		Log.d(DrawerActivity.SCANIT,myIntent.getStringExtra(AlarmReceiver.REMINDER_INTENT_KEY));
+		myIntent.putExtra(AlarmReceiver.REMINDER_KEY, r);
 
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext,
-				(int) r.getId(), myIntent, 0);
+				r.getPendingIntentId(), myIntent, 0);
 		AlarmManager alarmManager = (AlarmManager) mContext
 				.getSystemService(Service.ALARM_SERVICE);
 
