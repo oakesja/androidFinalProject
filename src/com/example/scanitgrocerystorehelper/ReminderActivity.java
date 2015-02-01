@@ -143,6 +143,7 @@ public class ReminderActivity extends DrawerActivity {
 		df.show(getFragmentManager(), "reminder type");
 	}
 
+	// TODO abstract these out using template pattern
 	private void enterExpirationReminderInfoDialog(
 			final ExpirationReminder reminderToUpdate) {
 		DialogFragment df = new DialogFragment() {
