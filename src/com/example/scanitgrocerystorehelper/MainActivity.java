@@ -8,8 +8,11 @@ import com.example.scanitgrocerystorehelper.models.GroceryList;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,8 +45,7 @@ public class MainActivity extends DrawerActivity {
 		mSqlAdapter.open();
 		mSqlAdapter.setAllLists(mGroceryLists);
 		mAdapter = new ListArrayAdapter(this, mGroceryLists);
-		
-		
+
 		mListView = (ListView) findViewById(R.id.srListsView);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(new OnItemClickListener() {
@@ -65,24 +67,18 @@ public class MainActivity extends DrawerActivity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> a, View v,
 					int position, long id) {
-				Object o = mListView.getItemAtPosition(position);
-				GroceryList fullObject = (GroceryList) o;
-				mGroceryLists.remove(position);
-				((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
-				Toast.makeText(MainActivity.this,
-						"You have deleted: " + " " + fullObject.getName(),
-						Toast.LENGTH_LONG).show();
+				showDeleteReminderDialog(position);
 				return true;
 			}
 		});
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -128,8 +124,37 @@ public class MainActivity extends DrawerActivity {
 		dialog.show();
 	}
 
+	public void showDeleteReminderDialog(final int position) {
+		DialogFragment df = new DialogFragment() {
+			@Override
+			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						getActivity());
+				builder.setTitle(R.string.confirm_delete_title);
+				builder.setMessage(R.string.confirm_delete_message_list);
+				builder.setNegativeButton(android.R.string.cancel, null);
+				builder.setPositiveButton(android.R.string.ok,
+						new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								deleteList(mAdapter.getItem(position));
+							}
+						});
+				return builder.create();
+			}
+		};
+		df.show(getFragmentManager(), "delete friend");
+	}
+
 	private void addGroceryList(GroceryList gl) {
 		mSqlAdapter.addList(gl);
+		mSqlAdapter.setAllLists(mGroceryLists);
+		mAdapter.notifyDataSetChanged();
+	}
+
+	private void deleteList(GroceryList gl) {
+		mSqlAdapter.deleteList(gl);
 		mSqlAdapter.setAllLists(mGroceryLists);
 		mAdapter.notifyDataSetChanged();
 	}

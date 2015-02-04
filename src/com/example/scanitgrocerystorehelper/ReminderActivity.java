@@ -281,7 +281,7 @@ public class ReminderActivity extends DrawerActivity {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						getActivity());
 				builder.setTitle(R.string.confirm_delete_title);
-				builder.setMessage(R.string.confirm_delete_message);
+				builder.setMessage(R.string.confirm_delete_message_reminder);
 				builder.setNegativeButton(android.R.string.cancel, null);
 				builder.setPositiveButton(android.R.string.ok,
 						new OnClickListener() {

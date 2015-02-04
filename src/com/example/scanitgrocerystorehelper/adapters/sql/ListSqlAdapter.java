@@ -34,7 +34,6 @@ public class ListSqlAdapter {
 	public void addList(GroceryList list) {
 		ContentValues row = list.getContentValue();
 		long rowId = mDatabase.insert(SqlAdapterKeys.LIST_TABLE, null, row);
-		Log.d(DrawerActivity.SCANIT, "" + rowId);
 		list.setId(rowId);
 	}
 
@@ -51,5 +50,13 @@ public class ListSqlAdapter {
 			lists.add(l);
 		}
 		Collections.sort(lists);
+	}
+
+	public void deleteList(GroceryList list) {
+		int x = mDatabase.delete(SqlAdapterKeys.LIST_TABLE, SqlAdapterKeys.KEY_ID
+				+ " = " + list.getId(), null);
+		
+		Log.d(DrawerActivity.SCANIT, " " + x + " " + list.getId());
+		//TODO delete all items too
 	}
 }

@@ -140,6 +140,8 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_HOUR));
 		int minute = cursor.getInt(cursor
 				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_MINUTE));
+		this.id = cursor.getLong(cursor
+				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_ID));
 		this.modified = new GregorianCalendar(year, month, day, hour, minute);
 		this.list = new ArrayList<ListItem>();
 		return this;

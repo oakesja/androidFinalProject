@@ -4,7 +4,8 @@
     <item
         android:id="@+id/addList"
         android:showAsAction="always"
-        android:title="@string/add">
+        android:title="@string/add"
+        android:icon="@drawable/ic_action_new">
     </item>
 
 </menu>

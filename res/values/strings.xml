@@ -19,7 +19,8 @@
     <string name="hint_food_reminder">Name of food to expire</string>
     <string name="add">Add</string>
     <string name="confirm_delete_title">Confirm deletion</string>
-    <string name="confirm_delete_message">Are you sure you want to delete this reminder?</string>
+    <string name="confirm_delete_message_reminder">Are you sure you want to delete this reminder?</string>
+    <string name="confirm_delete_message_list">Are you sure you want to delete this list?</string>
     <string name="notifcation_title">ScanIt! Grocery Store Helper reminder</string>
     <string name="list_header">My Lists</string>
     <string name="create_dialog_title">Create a list</string>
