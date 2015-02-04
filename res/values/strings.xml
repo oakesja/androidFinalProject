@@ -42,5 +42,6 @@
     <string name="expires_tomorrow">Your %s expires tomorrow</string>
     <string name="expires_formated">Your %1$s expires in %2$d days</string>
     <string name="expired_formated">Your %s is expired</string>
+    <string name="last_modified">Last modified %s</string>
 
 </resources>

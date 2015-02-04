@@ -40,7 +40,7 @@ public class ListActivity extends DrawerActivity {
 		Intent data = this.getIntent();
 		listName = data.getStringExtra("name");
 
-		totalView = (TextView) findViewById(R.id.total_price);
+//		totalView = (TextView) findViewById(R.id.total_price);
 		TextView mHeader = (TextView) findViewById(R.id.list_header);
 		mHeader.setText(listName);
 
@@ -149,7 +149,7 @@ public class ListActivity extends DrawerActivity {
 		for(ListItem l : mList){
 			total.add(l.getPrice().multiply(new BigDecimal(l.getQuantity())));
 		}
-		totalView.setText("$" + total.toString());
+//		totalView.setText("$" + total.toString());
 	}
 
 }

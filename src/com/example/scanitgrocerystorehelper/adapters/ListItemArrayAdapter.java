@@ -40,10 +40,10 @@ public class ListItemArrayAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.custom_row_view, null);
             holder = new ViewHolder();
-            holder.txtName = (TextView) convertView.findViewById(R.id.name);
+            holder.txtName = (TextView) convertView.findViewById(R.id.customRowItem1);
             holder.txtQuantity = (TextView) convertView
-                    .findViewById(R.id.cityState);
-            holder.txtPrice = (TextView) convertView.findViewById(R.id.phone);
+                    .findViewById(R.id.customRowItem2);
+            holder.txtPrice = (TextView) convertView.findViewById(R.id.customRowItem3);
  
             convertView.setTag(holder);
         } else {
