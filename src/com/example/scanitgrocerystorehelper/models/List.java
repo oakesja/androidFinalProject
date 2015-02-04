@@ -1,5 +1,6 @@
 package com.example.scanitgrocerystorehelper.models;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -75,6 +76,40 @@ public class List {
 	public void setAuthor(String author) {
 		this.author = author;
 	}
+
 	// model for list
 	// may have list of items, author?, date created?, last modified?
+
+	public String toString() {
+		// This is ugly
+		String ret = "";
+		ret += name;
+		ret += ";" + description;
+		ret += ";";
+		for (ListItem l : this.list) {
+			ret += l.toString() + "/";
+		}
+		ret.substring(0, ret.length() - 1);
+		ret += ";";
+		ret += ";" + created;
+		ret += ";" + modified;
+		ret += ";" + author;
+		return ret;
+	}
+
+	public List fromString(String s) {
+		String[] splitted = s.split(";");
+		ArrayList<ListItem> nList = new ArrayList<ListItem>();
+		List ret = new List(splitted[0], splitted[1]);
+		String[] lItems = splitted[2].split("/");
+		for (String nItem : lItems) {
+			String[] item = nItem.split(",");
+			nList.add(new ListItem(item[0], Integer.parseInt(item[1]),
+					new BigDecimal(item[2])));
+		}
+		ret.setDateCreated(new Date(splitted[3]));
+		ret.setDateModified(new Date(splitted[4]));
+		ret.setAuthor(splitted[5]);
+		return ret;
+	}
 }

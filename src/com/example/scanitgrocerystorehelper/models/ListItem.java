@@ -43,4 +43,8 @@ public class ListItem {
 	public BigDecimal getPrice(){
 		return this.price;
 	}
+	
+	public String toString(){
+		return itemName + "," + quantity + "," + price;
+	}
 }

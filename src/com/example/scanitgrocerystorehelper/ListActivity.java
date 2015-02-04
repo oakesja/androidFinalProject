@@ -30,6 +30,7 @@ public class ListActivity extends DrawerActivity {
 	private final String KEY_LIST_NAME = "name";
 	private final String KEY_LIST_TOSTRING = "data";
 	private String listName;
+	private TextView totalView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +40,13 @@ public class ListActivity extends DrawerActivity {
 		Intent data = this.getIntent();
 		listName = data.getStringExtra("name");
 
+		totalView = (TextView) findViewById(R.id.total_price);
 		TextView mHeader = (TextView) findViewById(R.id.list_header);
 		mHeader.setText(listName);
 
 		mList = generateTestItems();
+
+		updateTotal();
 
 		mListView = (ListView) findViewById(R.id.srListView);
 		mAdapter = new ListItemArrayAdapter(this, mList);
@@ -71,6 +75,7 @@ public class ListActivity extends DrawerActivity {
 				Toast.makeText(ListActivity.this,
 						"You have deleted: " + " " + fullObject.getName(),
 						Toast.LENGTH_LONG).show();
+				updateTotal();
 				return true;
 			}
 		});
@@ -99,6 +104,7 @@ public class ListActivity extends DrawerActivity {
 							nameView.getText().toString(),
 							Integer.parseInt(quantityView.getText().toString()),
 							new BigDecimal(priceView.getText().toString()));
+					updateTotal();
 				} else {
 					newListItem = new ListItem(nameView.getText().toString(),
 							Integer.parseInt(quantityView.getText().toString()));
@@ -136,6 +142,14 @@ public class ListActivity extends DrawerActivity {
 		newIntent.putExtra(KEY_LIST_NAME, listName);
 		newIntent.putExtra(KEY_LIST_TOSTRING, mList.toString());
 		startActivity(newIntent);
+	}
+
+	public void updateTotal() {
+		BigDecimal total = new BigDecimal("0.00");
+		for(ListItem l : mList){
+			total.add(l.getPrice().multiply(new BigDecimal(l.getQuantity())));
+		}
+		totalView.setText("$" + total.toString());
 	}
 
 }

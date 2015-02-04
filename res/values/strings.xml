@@ -39,5 +39,6 @@
     <string name="quantity">Quantity</string>
     <string name="price">Price</string>
     <string name="plus">+</string>
+    <string name="total_price">$%d</string>
 
 </resources>
