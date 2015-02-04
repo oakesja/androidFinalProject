@@ -21,7 +21,7 @@ import android.widget.RelativeLayout;
 public abstract class DrawerActivity extends Activity {
 	public static final String SCANIT = "SCANIT";
 
-	// need to update to v7 version
+	// TODO need to update to v7 version
 	private ActionBarDrawerToggle mDrawerToggle;
 	protected DrawerLayout mDrawerLayout;
 	protected ListView mDrawerList;

@@ -21,8 +21,6 @@
     <string name="confirm_delete_title">Confirm deletion</string>
     <string name="confirm_delete_message">Are you sure you want to delete this reminder?</string>
     <string name="notifcation_title">ScanIt! Grocery Store Helper reminder</string>
-    <string name="notifcation_text_expiration">Your %s expires today</string>
-    <string name="notifcation_text_reminder">%1$s at %2$s</string>
     <string name="list_header">My Lists</string>
     <string name="create_dialog_title">Create a list</string>
     <string name="name">Name</string>
@@ -39,6 +37,10 @@
     <string name="quantity">Quantity</string>
     <string name="price">Price</string>
     <string name="plus">+</string>
-    <string name="total_price">$%d</string>
+    <string name="coupon_message">Coupons and deal brought to you by Grocery Server</string>
+    <string name="expires_today">Your %s expires today</string>
+    <string name="expires_tomorrow">Your %s expires tomorrow</string>
+    <string name="expires_formated">Your %1$s expires in %2$d days</string>
+    <string name="expired_formated">Your %s is expired</string>
 
 </resources>

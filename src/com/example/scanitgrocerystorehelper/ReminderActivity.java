@@ -2,8 +2,10 @@ package com.example.scanitgrocerystorehelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 
 import com.example.scanitgrocerystorehelper.adapters.ReminderArrayAdapter;
+import com.example.scanitgrocerystorehelper.adapters.sql.ReminderSqlAdapter;
 import com.example.scanitgrocerystorehelper.models.ExpirationReminder;
 import com.example.scanitgrocerystorehelper.models.GeneralReminder;
 import com.example.scanitgrocerystorehelper.models.Reminder;
@@ -30,13 +32,19 @@ public class ReminderActivity extends DrawerActivity {
 
 	private ArrayList<Reminder> mReminders;
 	private ArrayAdapter<Reminder> mAdapter;
+	private ReminderSqlAdapter mSqlAdapter;
 
+	// TODO add edit capability
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_reminder);
 
 		mReminders = new ArrayList<Reminder>();
+
+		mSqlAdapter = new ReminderSqlAdapter(this);
+		mSqlAdapter.open();
+		mSqlAdapter.setAllReminders(mReminders);
 
 		mAdapter = new ReminderArrayAdapter(this, mReminders);
 		ListView listview = (ListView) findViewById(R.id.reminders);
@@ -51,6 +59,12 @@ public class ReminderActivity extends DrawerActivity {
 				return false;
 			}
 		});
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mSqlAdapter.close();
 	}
 
 	@Override
@@ -110,7 +124,7 @@ public class ReminderActivity extends DrawerActivity {
 		df.show(getFragmentManager(), "reminder type");
 	}
 
-	// try to abstract common parts between the two dialogs
+	// TODO try to abstract common parts between the two dialogs
 	private void enterExpirationReminderInfoDialog() {
 		DialogFragment df = new DialogFragment() {
 			@Override
@@ -124,7 +138,11 @@ public class ReminderActivity extends DrawerActivity {
 
 				final TimePicker timePicker = (TimePicker) v
 						.findViewById(R.id.reminderTimePicker);
-				timePicker.setVisibility(TimePicker.INVISIBLE);
+				timePicker.setVisibility(TimePicker.GONE);
+				
+				final DatePicker datePicker = (DatePicker) v
+						.findViewById(R.id.reminderDatePicker);
+				datePicker.setMinDate(System.currentTimeMillis() - 1000);
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						getActivity());
@@ -135,8 +153,6 @@ public class ReminderActivity extends DrawerActivity {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						DatePicker datePicker = (DatePicker) v
-								.findViewById(R.id.reminderDatePicker);
 						int month = datePicker.getMonth();
 						int day = datePicker.getDayOfMonth();
 						int year = datePicker.getYear();
@@ -165,6 +181,10 @@ public class ReminderActivity extends DrawerActivity {
 
 				final TimePicker timePicker = (TimePicker) v
 						.findViewById(R.id.reminderTimePicker);
+				
+				final DatePicker datePicker = (DatePicker) v
+						.findViewById(R.id.reminderDatePicker);
+				datePicker.setMinDate(System.currentTimeMillis() - 1000);
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						getActivity());
@@ -175,14 +195,13 @@ public class ReminderActivity extends DrawerActivity {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						DatePicker datePicker = (DatePicker) v
-								.findViewById(R.id.reminderDatePicker);
 						int month = datePicker.getMonth();
 						int day = datePicker.getDayOfMonth();
 						int year = datePicker.getYear();
 						int hour = timePicker.getCurrentHour();
 						int minute = timePicker.getCurrentMinute();
 						String name = editName.getText().toString();
+						Log.d(DrawerActivity.SCANIT, "" + hour + ":" + minute);
 						GeneralReminder reminder = new GeneralReminder(
 								getActivity(), month, day, year, hour, minute,
 								name);
@@ -219,14 +238,20 @@ public class ReminderActivity extends DrawerActivity {
 	}
 
 	private void addReminder(Reminder r) {
-		mReminders.add(r);
-		Collections.sort(mReminders);
+		mSqlAdapter.addReminder(r);
+		mSqlAdapter.setAllReminders(mReminders);
 		mAdapter.notifyDataSetChanged();
 	}
 
 	private void deleteReminder(Reminder r) {
-		mReminders.remove(r);
-		Collections.sort(mReminders);
+		mSqlAdapter.deleteReminder(r);
+		mSqlAdapter.setAllReminders(mReminders);
+		mAdapter.notifyDataSetChanged();
+	}
+	
+	public void updateReminder(Reminder r){
+		mSqlAdapter.updateReminder(r);
+		mSqlAdapter.setAllReminders(mReminders);
 		mAdapter.notifyDataSetChanged();
 	}
 }
