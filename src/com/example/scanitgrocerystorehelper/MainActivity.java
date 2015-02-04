@@ -20,10 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class MainActivity extends DrawerActivity {
@@ -32,8 +30,7 @@ public class MainActivity extends DrawerActivity {
 	private ListView mListView;
 	private ListArrayAdapter mAdapter;
 	private ListSqlAdapter mSqlAdapter;
-	private final String KEY_LIST_NAME = "name";
-	private final String KEY_LIST_TOSTRING = "data";
+	public static final String KEY_LIST_ID = "KEY_LIST_ID";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +53,8 @@ public class MainActivity extends DrawerActivity {
 
 				Intent newIntent = new Intent(MainActivity.this,
 						ListActivity.class);
-				newIntent.putExtra(KEY_LIST_NAME, gl.getName());
-				newIntent.putExtra(KEY_LIST_TOSTRING, gl.getList().toString());
+				newIntent.putExtra(KEY_LIST_ID, gl.getId());
 				startActivity(newIntent);
-
 			}
 		});
 
@@ -67,7 +62,7 @@ public class MainActivity extends DrawerActivity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> a, View v,
 					int position, long id) {
-				showDeleteReminderDialog(position);
+				showDeleteListDialog(position);
 				return true;
 			}
 		});
@@ -124,7 +119,7 @@ public class MainActivity extends DrawerActivity {
 		dialog.show();
 	}
 
-	public void showDeleteReminderDialog(final int position) {
+	public void showDeleteListDialog(final int position) {
 		DialogFragment df = new DialogFragment() {
 			@Override
 			public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -144,7 +139,7 @@ public class MainActivity extends DrawerActivity {
 				return builder.create();
 			}
 		};
-		df.show(getFragmentManager(), "delete friend");
+		df.show(getFragmentManager(), "delete list");
 	}
 
 	private void addGroceryList(GroceryList gl) {

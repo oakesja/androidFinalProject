@@ -11,6 +11,8 @@ class TaskDbHelper extends SQLiteOpenHelper {
 			+ SqlAdapterKeys.EXP_TABLE;
 	private static final String DROP_STATEMENT3 = "DROP TABLE IF EXISTS "
 			+ SqlAdapterKeys.LIST_TABLE;
+	private static final String DROP_STATEMENT4 = "DROP TABLE IF EXISTS "
+			+ SqlAdapterKeys.LIST_ITEMS_TABLE;
 	private static final String CREATE_STATEMENT1;
 	static {
 		StringBuilder sb = new StringBuilder();
@@ -64,6 +66,25 @@ class TaskDbHelper extends SQLiteOpenHelper {
 		CREATE_STATEMENT3 = sb.toString();
 	}
 
+	private static final String CREATE_STATEMENT4;
+	static {
+		StringBuilder sb = new StringBuilder();
+		sb.append("CREATE TABLE " + SqlAdapterKeys.LIST_ITEMS_TABLE + "(");
+		sb.append(SqlAdapterKeys.KEY_ID
+				+ " integer primary key autoincrement, ");
+		sb.append(SqlAdapterKeys.KEY_LIST_ID + " integer, ");
+		sb.append(SqlAdapterKeys.KEY_NAME + " text, ");
+		sb.append(SqlAdapterKeys.KEY_QUANTITY + " integer, ");
+		sb.append(SqlAdapterKeys.KEY_PRICE + " real, ");
+		sb.append(SqlAdapterKeys.KEY_YEAR + " integer, ");
+		sb.append(SqlAdapterKeys.KEY_MONTH + " integer, ");
+		sb.append(SqlAdapterKeys.KEY_DAY + " integer, ");
+		sb.append(SqlAdapterKeys.KEY_HOUR + " integer, ");
+		sb.append(SqlAdapterKeys.KEY_MINUTE + " integer, ");
+		sb.append(SqlAdapterKeys.KEY_SECOND + " integer");
+		sb.append(")");
+		CREATE_STATEMENT4 = sb.toString();
+	}
 	public TaskDbHelper(Context context) {
 		super(context, SqlAdapterKeys.DATABASE_NAME, null,
 				SqlAdapterKeys.DATABASE_VERSION);
@@ -74,6 +95,7 @@ class TaskDbHelper extends SQLiteOpenHelper {
 		db.execSQL(CREATE_STATEMENT1);
 		db.execSQL(CREATE_STATEMENT2);
 		db.execSQL(CREATE_STATEMENT3);
+		db.execSQL(CREATE_STATEMENT4);
 	}
 
 	@Override
@@ -84,5 +106,7 @@ class TaskDbHelper extends SQLiteOpenHelper {
 		db.execSQL(CREATE_STATEMENT2);
 		db.execSQL(DROP_STATEMENT3);
 		db.execSQL(CREATE_STATEMENT3);
+		db.execSQL(DROP_STATEMENT4);
+		db.execSQL(CREATE_STATEMENT4);
 	}
 }

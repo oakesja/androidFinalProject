@@ -15,7 +15,6 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 	private long id;
 	private String name;
 	private String description;
-	private ArrayList<ListItem> list;
 	private GregorianCalendar modified;
 
 	public GroceryList() {
@@ -25,14 +24,6 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 		this.modified = new GregorianCalendar();
 		this.name = name;
 		this.description = description;
-		this.list = new ArrayList<ListItem>();
-	}
-
-	public GroceryList(String name, String description, ArrayList<ListItem> list) {
-		this.modified = new GregorianCalendar();
-		this.name = name;
-		this.description = description;
-		this.list = list;
 	}
 
 	public long getId() {
@@ -51,10 +42,6 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 		return this.description;
 	}
 
-	public ArrayList<ListItem> getList() {
-		return this.list;
-	}
-
 	public GregorianCalendar getDateModified() {
 		return this.modified;
 	}
@@ -67,10 +54,6 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 		this.description = description;
 	}
 
-	public void setList(ArrayList<ListItem> list) {
-		this.list = list;
-	}
-
 	public void setDateModified(GregorianCalendar modified) {
 		this.modified = modified;
 	}
@@ -81,9 +64,9 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 		ret += name;
 		ret += ";" + description;
 		ret += ";";
-		for (ListItem l : this.list) {
-			ret += l.toString() + "/";
-		}
+		// for (ListItem l : this.list) {
+		// ret += l.toString() + "/";
+		// }
 		ret.substring(0, ret.length() - 1);
 		ret += ";";
 		ret += ";" + modified;
@@ -95,11 +78,11 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 		ArrayList<ListItem> nList = new ArrayList<ListItem>();
 		GroceryList ret = new GroceryList(splitted[0], splitted[1]);
 		String[] lItems = splitted[2].split("/");
-		for (String nItem : lItems) {
-			String[] item = nItem.split(",");
-			nList.add(new ListItem(item[0], Integer.parseInt(item[1]),
-					new BigDecimal(item[2])));
-		}
+//		for (String nItem : lItems) {
+//			String[] item = nItem.split(",");
+//			nList.add(new ListItem(item[0], Integer.parseInt(item[1]),
+//					new BigDecimal(item[2])));
+//		}
 		// ret.setDateCreated(new Date(splitted[3]));
 		// ret.setDateModified(new Date(splitted[4]));
 		// ret.setAuthor(splitted[5]);
@@ -143,7 +126,6 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 		this.id = cursor.getLong(cursor
 				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_ID));
 		this.modified = new GregorianCalendar(year, month, day, hour, minute);
-		this.list = new ArrayList<ListItem>();
 		return this;
 	}
 
