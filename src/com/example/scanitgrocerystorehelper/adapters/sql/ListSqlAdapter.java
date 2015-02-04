@@ -54,11 +54,10 @@ public class ListSqlAdapter {
 	}
 
 	public void deleteList(GroceryList list) {
-		int x = mDatabase.delete(SqlAdapterKeys.LIST_TABLE,
-				SqlAdapterKeys.KEY_ID + " = " + list.getId(), null);
-
-		Log.d(DrawerActivity.SCANIT, " " + x + " " + list.getId());
-		// TODO delete all items too
+		mDatabase.delete(SqlAdapterKeys.LIST_TABLE, SqlAdapterKeys.KEY_ID
+				+ " = " + list.getId(), null);
+		mDatabase.delete(SqlAdapterKeys.LIST_ITEMS_TABLE,
+				SqlAdapterKeys.KEY_LIST_ID + " == " + list.getId(), null);
 	}
 
 	public GroceryList getList(long id) {
@@ -71,18 +70,19 @@ public class ListSqlAdapter {
 		l.getFromCursor(mContext, cursor);
 		return l;
 	}
-	
-	public void addListItem(ListItem listItem){
+
+	public void addListItem(ListItem listItem) {
 		ContentValues row = listItem.getContentValue();
-		long rowId = mDatabase.insert(SqlAdapterKeys.LIST_ITEMS_TABLE, null, row);
-		Log.d(DrawerActivity.SCANIT, listItem.getName() + " " + rowId);
+		long rowId = mDatabase.insert(SqlAdapterKeys.LIST_ITEMS_TABLE, null,
+				row);
 		listItem.setId(rowId);
 	}
-	
-	public void setListItems(ArrayList<ListItem> items, long listId){
+
+	public void setListItems(ArrayList<ListItem> items, long listId) {
 		items.clear();
 		Cursor cursor = mDatabase.query(SqlAdapterKeys.LIST_ITEMS_TABLE, null,
-				SqlAdapterKeys.KEY_LIST_ID + " == " + listId, null, null, null, null);
+				SqlAdapterKeys.KEY_LIST_ID + " == " + listId, null, null, null,
+				null);
 		if (cursor == null) {
 			return;
 		}
@@ -90,8 +90,12 @@ public class ListSqlAdapter {
 			ListItem l = new ListItem();
 			l.getFromCursor(mContext, cursor);
 			items.add(l);
-			Log.d(DrawerActivity.SCANIT, l.getName());
 		}
 		Collections.sort(items);
+	}
+
+	public void deleteListItem(ListItem listItem) {
+		mDatabase.delete(SqlAdapterKeys.LIST_ITEMS_TABLE, SqlAdapterKeys.KEY_ID
+				+ " = " + listItem.getId(), null);
 	}
 }

@@ -77,14 +77,7 @@ public class ListActivity extends DrawerActivity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> a, View v,
 					int position, long id) {
-				Object o = mListView.getItemAtPosition(position);
-				ListItem fullObject = (ListItem) o;
-				mList.remove(position);
-				((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
-				Toast.makeText(ListActivity.this,
-						"You have deleted: " + " " + fullObject.getName(),
-						Toast.LENGTH_LONG).show();
-				updateTotal();
+				deleteListItem(mAdapter.getItem(position));
 				return true;
 			}
 		});
@@ -175,6 +168,14 @@ public class ListActivity extends DrawerActivity {
 		mSqlAdapter.addListItem(listItem);
 		mSqlAdapter.setListItems(mList, mGroceryList.getId());
 		mAdapter.notifyDataSetChanged();
+		updateTotal();
+	}
+	
+	private void deleteListItem(ListItem listItem){
+		mSqlAdapter.deleteListItem(listItem);
+		mSqlAdapter.setListItems(mList, mGroceryList.getId());
+		mAdapter.notifyDataSetChanged();
+		updateTotal();
 	}
 
 }
