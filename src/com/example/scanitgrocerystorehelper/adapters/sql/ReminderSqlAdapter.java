@@ -19,11 +19,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class ReminderSqlAdapter {
-
-	private static final String GENERAL_TABLE = "general";
-	private static final String EXP_TABLE = "exp";
-	private static final int DATABASE_VERSION = 2;
-
 	private SQLiteDatabase mDatabase;
 	private SQLiteOpenHelper mHelper;
 	private Context mContext;
@@ -33,8 +28,10 @@ public class ReminderSqlAdapter {
 		mHelper = new TaskDbHelper(context);
 		mContext = context;
 		mTableNameLookup = new HashMap<Class<?>, String>();
-		mTableNameLookup.put(GeneralReminder.class, GENERAL_TABLE);
-		mTableNameLookup.put(ExpirationReminder.class, EXP_TABLE);
+		mTableNameLookup.put(GeneralReminder.class,
+				SqlAdapterKeys.GENERAL_TABLE);
+		mTableNameLookup
+				.put(ExpirationReminder.class, SqlAdapterKeys.EXP_TABLE);
 	}
 
 	public void open() {
@@ -86,7 +83,8 @@ public class ReminderSqlAdapter {
 	public ArrayList<Reminder> getAllRemindersToNotify() {
 		ArrayList<Reminder> reminders = new ArrayList<Reminder>();
 		for (Class<?> c : mTableNameLookup.keySet()) {
-			Log.d(DrawerActivity.SCANIT, "get all reminders for " + c.toString());
+			Log.d(DrawerActivity.SCANIT,
+					"get all reminders for " + c.toString());
 			String table = mTableNameLookup.get(c);
 			Cursor cursor = mDatabase.query(table, null,
 					SqlAdapterKeys.KEY_NOTIFY + "=1", null, null, null, null);
@@ -122,66 +120,5 @@ public class ReminderSqlAdapter {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	// TODO abstract this out if possible
-	private static class TaskDbHelper extends SQLiteOpenHelper {
-		private static final String DROP_STATEMENT1 = "DROP TABLE IF EXISTS "
-				+ GENERAL_TABLE;
-		private static final String DROP_STATEMENT2 = "DROP TABLE IF EXISTS "
-				+ EXP_TABLE;
-		private static final String CREATE_STATEMENT1;
-		static {
-			StringBuilder sb = new StringBuilder();
-			sb.append("CREATE TABLE " + GENERAL_TABLE + "(");
-			sb.append(SqlAdapterKeys.KEY_ID
-					+ " integer primary key autoincrement, ");
-			sb.append(SqlAdapterKeys.KEY_NAME + " text, ");
-			sb.append(SqlAdapterKeys.KEY_YEAR + " integer, ");
-			sb.append(SqlAdapterKeys.KEY_MONTH + " integer, ");
-			sb.append(SqlAdapterKeys.KEY_DAY + " integer, ");
-			sb.append(SqlAdapterKeys.KEY_HOUR + " integer, ");
-			sb.append(SqlAdapterKeys.KEY_MINUTE + " integer, ");
-			sb.append(SqlAdapterKeys.KEY_NOTIFY + " integer, ");
-			sb.append(SqlAdapterKeys.KEY_PENDINGINTENTID + " integer ");
-			sb.append(")");
-			CREATE_STATEMENT1 = sb.toString();
-		}
-
-		private static final String CREATE_STATEMENT2;
-		static {
-			StringBuilder sb = new StringBuilder();
-			sb.append("CREATE TABLE " + EXP_TABLE + "(");
-			sb.append(SqlAdapterKeys.KEY_ID
-					+ " integer primary key autoincrement, ");
-			sb.append(SqlAdapterKeys.KEY_NAME + " text, ");
-			sb.append(SqlAdapterKeys.KEY_YEAR + " integer, ");
-			sb.append(SqlAdapterKeys.KEY_MONTH + " integer, ");
-			sb.append(SqlAdapterKeys.KEY_DAY + " integer, ");
-			sb.append(SqlAdapterKeys.KEY_HOUR + " integer, ");
-			sb.append(SqlAdapterKeys.KEY_MINUTE + " integer, ");
-			sb.append(SqlAdapterKeys.KEY_NOTIFY + " integer, ");
-			sb.append(SqlAdapterKeys.KEY_PENDINGINTENTID + " integer ");
-			sb.append(")");
-			CREATE_STATEMENT2 = sb.toString();
-		}
-
-		public TaskDbHelper(Context context) {
-			super(context, SqlAdapterKeys.DATABASE_NAME, null, DATABASE_VERSION);
-		}
-
-		@Override
-		public void onCreate(SQLiteDatabase db) {
-			db.execSQL(CREATE_STATEMENT1);
-			db.execSQL(CREATE_STATEMENT2);
-		}
-
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			db.execSQL(DROP_STATEMENT1);
-			db.execSQL(CREATE_STATEMENT1);
-			db.execSQL(DROP_STATEMENT2);
-			db.execSQL(CREATE_STATEMENT2);
-		}
 	}
 }
