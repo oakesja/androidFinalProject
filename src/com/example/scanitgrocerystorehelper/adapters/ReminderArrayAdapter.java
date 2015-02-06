@@ -57,7 +57,7 @@ public class ReminderArrayAdapter extends ArrayAdapter<Reminder> {
 		myIntent.putExtra(AlarmReceiver.REMINDER_KEY, r);
 
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext,
-				r.getPendingIntentId(), myIntent, 0);
+				r.getPendingIntentId(), myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		AlarmManager alarmManager = (AlarmManager) mContext
 				.getSystemService(Service.ALARM_SERVICE);
 

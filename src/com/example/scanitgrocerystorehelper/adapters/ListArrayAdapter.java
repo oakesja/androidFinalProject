@@ -1,62 +1,33 @@
 package com.example.scanitgrocerystorehelper.adapters;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 import com.example.scanitgrocerystorehelper.R;
-import com.example.scanitgrocerystorehelper.models.List;
-import android.annotation.SuppressLint;
+import com.example.scanitgrocerystorehelper.models.GroceryList;
+
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class ListArrayAdapter extends BaseAdapter {
-    private static ArrayList<List> searchArrayList;
-    
-    private LayoutInflater mInflater;
- 
-    public ListArrayAdapter(Context context, ArrayList<List> results) {
-        searchArrayList = results;
-        mInflater = LayoutInflater.from(context);
-    }
- 
-    public int getCount() {
-        return searchArrayList.size();
-    }
- 
-    public Object getItem(int position) {
-        return searchArrayList.get(position);
-    }
- 
-    public long getItemId(int position) {
-        return position;
-    }
- 
-    @SuppressLint("InflateParams")
+public class ListArrayAdapter extends ArrayAdapter<GroceryList> {
+
+	public ListArrayAdapter(Context context, List<GroceryList> lists) {
+		super(context, R.layout.custom_row_view, R.id.customRowItem1, lists);
+	}
+
 	public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.custom_row_view, null);
-            holder = new ViewHolder();
-            holder.txtName = (TextView) convertView.findViewById(R.id.name);
-            holder.txtDescription = (TextView) convertView
-                    .findViewById(R.id.cityState);
- 
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
- 
-        holder.txtName.setText(searchArrayList.get(position).getName());
-        holder.txtDescription.setText(searchArrayList.get(position).getDescription());
- 
-        return convertView;
-    }
- 
-    static class ViewHolder {
-        TextView txtName;
-        TextView txtDescription;
-    }
+		View v = super.getView(position, convertView, parent);
+		GroceryList gl = getItem(position);
+		((TextView) v.findViewById(R.id.customRowItem1)).setText(gl.getName());
+		((TextView) v.findViewById(R.id.customRowItem2)).setText(gl.getDescription());
+//		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm aaa");
+//		sdf.setCalendar(gl.getDateModified());
+//		String time = sdf.format(gl.getDateModified().getTime());
+//		String s = getContext().getString(R.string.last_modified, time);
+//		((TextView) v.findViewById(R.id.customRowItem3)).setText(s);
+		return v;
+	}
 }

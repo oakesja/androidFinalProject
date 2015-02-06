@@ -1,63 +1,60 @@
 package com.example.scanitgrocerystorehelper;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
+
 import com.example.scanitgrocerystorehelper.adapters.ListArrayAdapter;
-import com.example.scanitgrocerystorehelper.models.List;
-import com.example.scanitgrocerystorehelper.models.ListItem;
+import com.example.scanitgrocerystorehelper.adapters.sql.ListSqlAdapter;
+import com.example.scanitgrocerystorehelper.models.GroceryList;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class MainActivity extends DrawerActivity {
 
-	private ArrayList<List> mList;
+	private ArrayList<GroceryList> mGroceryLists;
 	private ListView mListView;
 	private ListArrayAdapter mAdapter;
-	private final String KEY_LIST_NAME = "name";
-	private final String KEY_LIST_TOSTRING = "data";
+	private ListSqlAdapter mSqlAdapter;
+	public static final String KEY_LIST_ID = "KEY_LIST_ID";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		mList = generateTestItems();
+		mGroceryLists = new ArrayList<GroceryList>();
+		mSqlAdapter = new ListSqlAdapter(this);
+		mSqlAdapter.open();
+		mSqlAdapter.setAllLists(mGroceryLists);
+		mAdapter = new ListArrayAdapter(this, mGroceryLists);
 
 		mListView = (ListView) findViewById(R.id.srListsView);
-
-		mAdapter = new ListArrayAdapter(this, mList);
 		mListView.setAdapter(mAdapter);
-
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> a, View v, int position,
 					long id) {
-				Object o = mListView.getItemAtPosition(position);
-				List fullObject = (List) o;
-//				Toast.makeText(MainActivity.this,
-//						"You have chosen: " + " " + fullObject.getName(),
-//						Toast.LENGTH_LONG).show();
+				GroceryList gl = mAdapter.getItem(position);
 
 				Intent newIntent = new Intent(MainActivity.this,
 						ListActivity.class);
-				newIntent.putExtra(KEY_LIST_NAME, fullObject.getName());
-				newIntent.putExtra(KEY_LIST_TOSTRING, fullObject.getList()
-						.toString());
+				newIntent.putExtra(KEY_LIST_ID, gl.getId());
 				startActivity(newIntent);
-
 			}
 		});
 
@@ -65,59 +62,95 @@ public class MainActivity extends DrawerActivity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> a, View v,
 					int position, long id) {
-				Object o = mListView.getItemAtPosition(position);
-				List fullObject = (List) o;
-				mList.remove(position);
-				((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
-				Toast.makeText(MainActivity.this,
-						"You have deleted: " + " " + fullObject.getName(),
-						Toast.LENGTH_LONG).show();
+				showDeleteListDialog(position);
 				return true;
 			}
 		});
 	}
 
-	private ArrayList<List> generateTestItems() {
-		ArrayList<List> mNewList = new ArrayList<List>();
-		ArrayList<ListItem> mNewItemList = new ArrayList<ListItem>();
-		mNewItemList.add(new ListItem("Fruit", 3, new BigDecimal("4.00")));
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
 
-		mNewList.add(new List("TestName", "TestDescription", mNewItemList));
-		mNewList.add(new List("TestName2", "TestDescription2"));
-		mNewList.add(new List("TestName3", "TestDescription3"));
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.addList:
+			showAddListDialog();
+			return true;
 
-		return mNewList;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mSqlAdapter.close();
 	}
 
 	@SuppressLint("InflateParams")
-	public void showAddListDialog(View v) {
+	public void showAddListDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		LayoutInflater inflater = this.getLayoutInflater();
 		final View mView = inflater.inflate(R.layout.dialog_add_list, null);
 		builder.setView(mView);
+		builder.setTitle(R.string.create_dialog_title);
 
-		builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				EditText nameView = (EditText) mView
-						.findViewById(R.id.dialogAddName);
-				EditText courseView = (EditText) mView
-						.findViewById(R.id.dialogAddDescription);
-				List newList = new List(nameView.getText().toString(),
-						courseView.getText().toString());
-
-				mList.add(newList);
-				mAdapter.notifyDataSetChanged();
-			}
-		});
-		builder.setNegativeButton("Cancel",
+		builder.setPositiveButton(R.string.add,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						// User clicked Cancel button, do nothing
+						EditText nameView = (EditText) mView
+								.findViewById(R.id.dialogAddName);
+						EditText courseView = (EditText) mView
+								.findViewById(R.id.dialogAddDescription);
+						GroceryList newList = new GroceryList(nameView
+								.getText().toString(), courseView.getText()
+								.toString());
+						addGroceryList(newList);
 					}
 				});
+		builder.setNegativeButton(android.R.string.cancel, null);
 
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}
 
+	public void showDeleteListDialog(final int position) {
+		DialogFragment df = new DialogFragment() {
+			@Override
+			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						getActivity());
+				builder.setTitle(R.string.confirm_delete_title);
+				builder.setMessage(R.string.confirm_delete_message_list);
+				builder.setNegativeButton(android.R.string.cancel, null);
+				builder.setPositiveButton(android.R.string.ok,
+						new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								deleteList(mAdapter.getItem(position));
+							}
+						});
+				return builder.create();
+			}
+		};
+		df.show(getFragmentManager(), "delete list");
+	}
+
+	private void addGroceryList(GroceryList gl) {
+		mSqlAdapter.addList(gl);
+		mSqlAdapter.setAllLists(mGroceryLists);
+		mAdapter.notifyDataSetChanged();
+	}
+
+	private void deleteList(GroceryList gl) {
+		mSqlAdapter.deleteList(gl);
+		mSqlAdapter.setAllLists(mGroceryLists);
+		mAdapter.notifyDataSetChanged();
+	}
 }

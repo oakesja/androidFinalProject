@@ -18,6 +18,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@id/list_header" />
 
+
     <Button
         android:id="@+id/add_list_item_button"
         android:layout_width="wrap_content"
