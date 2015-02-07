@@ -44,5 +44,8 @@
     <string name="expires_formated">Your %1$s expires in %2$d days</string>
     <string name="expired_formated">Your %s is expired</string>
     <string name="last_modified">Last modified %s</string>
+    <string name="could_not_find_item">Lookup failed. Please enter the item name</string>
+    <string name="progress_dialog_title">Looking up product name</string>
+    <string name="progress_dialog_message">Loading...</string>
 
 </resources>
