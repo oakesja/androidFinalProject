@@ -49,6 +49,6 @@
     <string name="progress_dialog_message">Loading...</string>
     <string name="add_to_list">Add to List</string>
     <string name="select_list_dialog_title">Select list</string>
-    
+    <string name="scan_item">Scan item</string>
 
 </resources>

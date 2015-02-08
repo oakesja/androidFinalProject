@@ -1,4 +1,4 @@
-package com.example.scanitgrocerystorehelper.utils;
+package com.example.scanitgrocerystorehelper.dialogs;
 
 import android.app.DialogFragment;
 

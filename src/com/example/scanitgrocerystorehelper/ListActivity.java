@@ -6,14 +6,20 @@ import java.util.ArrayList;
 import com.example.scanitgrocerystorehelper.adapters.ListItemArrayAdapter;
 import com.example.scanitgrocerystorehelper.adapters.sql.ListSqlAdapter;
 import com.example.scanitgrocerystorehelper.adapters.sql.SqlAdapterKeys;
+import com.example.scanitgrocerystorehelper.dialogs.EnsureBarcodeOutputDialog;
 import com.example.scanitgrocerystorehelper.models.GroceryList;
 import com.example.scanitgrocerystorehelper.models.ListItem;
+import com.example.scanitgrocerystorehelper.utils.BarcodeLookup;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -95,9 +101,39 @@ public class ListActivity extends DrawerActivity {
 		case R.id.addListItem:
 			showAddListItemDialog();
 			return true;
+		case R.id.scanItem:
+			IntentIntegrator it = new IntentIntegrator(this);
+			it.initiateScan();
+			return true;
 
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		IntentResult scanResult = IntentIntegrator.parseActivityResult(
+				requestCode, resultCode, data);
+		if (scanResult != null) {
+			Log.d(DrawerActivity.SCANIT, scanResult.getContents());
+			new BarcodeLookup(this).execute(new EnsureLookupAddDialog(this),
+					scanResult.getContents());
+		}
+	}
+
+	private class EnsureLookupAddDialog extends EnsureBarcodeOutputDialog {
+
+		public EnsureLookupAddDialog(Context context) {
+			super(context);
+		}
+
+		@Override
+		public void handleClick(DialogInterface dialog, int which,
+				String productName) {
+			ListItem li = new ListItem(productName, 1, mGroceryList.getId());
+			addListItem(li);
 		}
 	}
 
@@ -170,8 +206,8 @@ public class ListActivity extends DrawerActivity {
 		mAdapter.notifyDataSetChanged();
 		updateTotal();
 	}
-	
-	private void deleteListItem(ListItem listItem){
+
+	private void deleteListItem(ListItem listItem) {
 		mSqlAdapter.deleteListItem(listItem);
 		mSqlAdapter.setListItems(mList, mGroceryList.getId());
 		mAdapter.notifyDataSetChanged();

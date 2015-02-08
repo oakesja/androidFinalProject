@@ -3,9 +3,9 @@ package com.example.scanitgrocerystorehelper;
 import java.util.ArrayList;
 
 import com.example.scanitgrocerystorehelper.adapters.sql.ListSqlAdapter;
+import com.example.scanitgrocerystorehelper.dialogs.EnsureBarcodeOutputDialog;
 import com.example.scanitgrocerystorehelper.models.GroceryList;
 import com.example.scanitgrocerystorehelper.models.ListItem;
-import com.example.scanitgrocerystorehelper.utils.BarcodeDialog;
 import com.example.scanitgrocerystorehelper.utils.BarcodeLookup;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -13,14 +13,12 @@ import com.google.zxing.integration.android.IntentResult;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ListView;
 
 public class ScannerActivity extends DrawerActivity {
 	private ListSqlAdapter mSqlAdapter;
@@ -48,36 +46,22 @@ public class ScannerActivity extends DrawerActivity {
 				requestCode, resultCode, data);
 		if (scanResult != null) {
 			Log.d(DrawerActivity.SCANIT, scanResult.getContents());
-			new BarcodeLookup(this).execute(new EnsureLookupDialog(),
-					scanResult.getContents());
+			new BarcodeLookup(this).execute(new EnsureLookupSelectListDialog(
+					this), scanResult.getContents());
 		}
 	}
 
-	private class EnsureLookupDialog extends BarcodeDialog {
-		private EditText editText;
+	private class EnsureLookupSelectListDialog extends
+			EnsureBarcodeOutputDialog {
 
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(
-					ScannerActivity.this);
-			View v = getLayoutInflater().inflate(R.layout.dialog_ensure_lookup,
-					null);
-			editText = (EditText) v.findViewById(R.id.editBarcodeLookupName);
-			if (getProductName() != "") {
-				editText.setText(getProductName());
-			}
-			builder.setNegativeButton(android.R.string.cancel, null);
-			builder.setPositiveButton(R.string.add_to_list,
-					new OnClickListener() {
-
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							showSelectListDialog(getProductName());
-						}
-					});
-			builder.setView(v);
-			return builder.create();
+		public EnsureLookupSelectListDialog(Context context) {
+			super(context);
 		}
+
+		public void handleClick(DialogInterface dialog, int which, String productName) {
+			showSelectListDialog(productName);
+		}
+
 	}
 
 	private void showSelectListDialog(final String productNameToAdd) {
