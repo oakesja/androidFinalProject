@@ -113,7 +113,6 @@ public class ListActivity extends DrawerActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
 		IntentResult scanResult = IntentIntegrator.parseActivityResult(
 				requestCode, resultCode, data);
 		if (scanResult != null && scanResult.getContents() != null) {
