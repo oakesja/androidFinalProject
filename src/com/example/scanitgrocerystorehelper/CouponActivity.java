@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -58,6 +59,7 @@ public class CouponActivity extends DrawerActivity {
 					int position, long id) {
 				long listId = mLists.get(position).getId();
 				String url = createUrl(listId);
+				Log.d(DrawerActivity.SCANIT, url);
 				openWebView(url);
 			}
 		});
@@ -74,9 +76,14 @@ public class CouponActivity extends DrawerActivity {
 		mSqlAdapter.setListItems(items, listId);
 		String url = mUrl;
 		for (int i = 0; i < items.size(); i++) {
-			url += items.get(i).getName() + "|";
+			url += getUrlName(items.get(i).getName()) + "|";
 		}
 		return url.substring(0, url.length() - 1);
+	}
+	
+	private String getUrlName(String name){
+		String s = name.replaceAll("[^A-Za-z0-9 ]", "");
+		return s.replaceAll("\\s", "%20");
 	}
 
 	private void openWebView(String url) {
