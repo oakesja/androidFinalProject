@@ -3,7 +3,7 @@
 
     <string-array name="drawer_names">
         <item>Lists</item>
-        <item>Coupons</item>
+        <item>Deals</item>
         <item>Reminders</item>
         <item>Scanner</item>
         <item>About</item>
