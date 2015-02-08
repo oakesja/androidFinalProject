@@ -33,7 +33,7 @@ public class BarcodeLookup extends AsyncTask<Object, Void, String> {
 	private final String SEARCH_UPC_URL = "http://www.searchupc.com/handlers/upcsearch.ashx?request_type=3&access_token=";
 	private final String SEARCH_UPC_KEY = "642FC14C-D4C2-46F3-91BB-784855F3DCCE";
 	private final String OUTPAN_URL_GET = "http://www.outpan.com/api/get-product.php?barcode=";
-	private final String OUTPAN_KEY = "0fafc777e3692cf41bade0fb6c7926b9";
+	public static final String OUTPAN_KEY = "0fafc777e3692cf41bade0fb6c7926b9";
 	private ProgressDialog pd;
 
 	@Override
@@ -49,6 +49,7 @@ public class BarcodeLookup extends AsyncTask<Object, Void, String> {
 	protected String doInBackground(Object... params) {
 		dialog = (BarcodeDialog) params[0];
 		String code = (String) params[1];
+		dialog.setBarcode(code);
 
 		String outpanUrl = getOutpanLookupUrl(code);
 		String outpanResult = getResponse(outpanUrl);
