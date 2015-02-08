@@ -20,12 +20,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class CouponActivity extends DrawerActivity {
 
-	private final String mUrl = "http://www.groceryserver.com/groceryserver/gsmobile/site/index.jsp?zipCode=47803&items=";
+	private final String mUrl = "http://www.groceryserver.com/groceryserver/gsmobile/site/index.jsp?";
 	private ListSqlAdapter mSqlAdapter;
 	private ArrayList<GroceryList> mLists;
 
@@ -34,11 +35,6 @@ public class CouponActivity extends DrawerActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_coupon);
 
-		// TODO need to manipulate url above with Zipcode and specified lists or
-		// single item
-		// need to validate the url after each item adition to it to make sure
-		// it is still valid
-		// replace spaces with %20
 		mSqlAdapter = new ListSqlAdapter(this);
 		mSqlAdapter.open();
 
@@ -58,9 +54,7 @@ public class CouponActivity extends DrawerActivity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				long listId = mLists.get(position).getId();
-				String url = createUrl(listId);
-				Log.d(DrawerActivity.SCANIT, url);
-				openWebView(url);
+				selectZipCodeDialog(listId);
 			}
 		});
 	}
@@ -70,18 +64,44 @@ public class CouponActivity extends DrawerActivity {
 		super.onDestroy();
 		mSqlAdapter.close();
 	}
+	
+	private void selectZipCodeDialog(final long listId){
+		DialogFragment df = new DialogFragment(){
+			@Override
+			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(CouponActivity.this);
+				final View v = getLayoutInflater().inflate(R.layout.dialog_enter_zip_code, null);
+				builder.setView(v);
+				builder.setTitle(R.string.zip_code_dialog_title);
+				builder.setNegativeButton(android.R.string.cancel, null);
+				builder.setPositiveButton(android.R.string.ok, new OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String zipcode = ((EditText)v.findViewById(R.id.zipCodeEditText)).getText().toString();
+						String url = createUrl(listId, zipcode);
+						Log.d(DrawerActivity.SCANIT, url);
+						openWebView(url);
+					}
+				});
+				return builder.create();
+			}
+		};
+		df.show(getFragmentManager(), "zip code");
+	}
 
-	private String createUrl(long listId) {
+	private String createUrl(long listId, String zipcode) {
 		ArrayList<ListItem> items = new ArrayList<ListItem>();
 		mSqlAdapter.setListItems(items, listId);
 		String url = mUrl;
+		url += "zipCode=" + zipcode + "&items=";
 		for (int i = 0; i < items.size(); i++) {
 			url += getUrlName(items.get(i).getName()) + "|";
 		}
 		return url.substring(0, url.length() - 1);
 	}
-	
-	private String getUrlName(String name){
+
+	private String getUrlName(String name) {
 		String s = name.replaceAll("[^A-Za-z0-9 ]", "");
 		return s.replaceAll("\\s", "%20");
 	}
