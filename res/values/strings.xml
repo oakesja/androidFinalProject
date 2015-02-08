@@ -47,5 +47,8 @@
     <string name="could_not_find_item">Lookup failed. Please enter the item name</string>
     <string name="progress_dialog_title">Looking up product name</string>
     <string name="progress_dialog_message">Loading...</string>
+    <string name="add_to_list">Add to List</string>
+    <string name="select_list_dialog_title">Select list</string>
+    
 
 </resources>

@@ -42,14 +42,14 @@ public class ListSqlAdapter {
 		lists.clear();
 		Cursor cursor = mDatabase.query(SqlAdapterKeys.LIST_TABLE, null, null,
 				null, null, null, null);
-		if (cursor == null) {
+		if (cursor == null || !cursor.moveToFirst()) {
 			return;
 		}
-		while (cursor.moveToNext()) {
+		do {
 			GroceryList l = new GroceryList();
 			l.getFromCursor(mContext, cursor);
 			lists.add(l);
-		}
+		} while (cursor.moveToNext());
 		Collections.sort(lists);
 	}
 
@@ -83,14 +83,14 @@ public class ListSqlAdapter {
 		Cursor cursor = mDatabase.query(SqlAdapterKeys.LIST_ITEMS_TABLE, null,
 				SqlAdapterKeys.KEY_LIST_ID + " == " + listId, null, null, null,
 				null);
-		if (cursor == null) {
+		if (cursor == null || !cursor.moveToFirst()) {
 			return;
 		}
-		while (cursor.moveToNext()) {
+		do {
 			ListItem l = new ListItem();
 			l.getFromCursor(mContext, cursor);
 			items.add(l);
-		}
+		} while (cursor.moveToNext());
 		Collections.sort(items);
 	}
 
