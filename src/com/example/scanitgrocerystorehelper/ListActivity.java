@@ -1,15 +1,16 @@
 package com.example.scanitgrocerystorehelper;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 import com.example.scanitgrocerystorehelper.adapters.ListItemArrayAdapter;
 import com.example.scanitgrocerystorehelper.adapters.sql.ListSqlAdapter;
-import com.example.scanitgrocerystorehelper.adapters.sql.SqlAdapterKeys;
 import com.example.scanitgrocerystorehelper.models.GroceryList;
 import com.example.scanitgrocerystorehelper.models.ListItem;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,9 +20,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -35,6 +36,8 @@ public class ListActivity extends DrawerActivity {
 	private GroceryList mGroceryList;
 	private TextView totalView;
 	private ListSqlAdapter mSqlAdapter;
+	private ShareActionProvider mShareActionProvider;
+	private long listId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,17 +48,17 @@ public class ListActivity extends DrawerActivity {
 		mSqlAdapter.open();
 
 		Intent data = this.getIntent();
-		long listId = data.getLongExtra(MainActivity.KEY_LIST_ID, -1);
+		listId = data.getLongExtra(MainActivity.KEY_LIST_ID, -1);
 		mGroceryList = mSqlAdapter.getList(listId);
 
 		mList = new ArrayList<ListItem>();
 		mSqlAdapter.setListItems(mList, mGroceryList.getId());
 
-		// totalView = (TextView) findViewById(R.id.total_price);
+		totalView = (TextView) findViewById(R.id.total_price);
 		TextView mHeader = (TextView) findViewById(R.id.list_header);
 		mHeader.setText(mGroceryList.getName());
 
-		// updateTotal();
+		updateList();
 
 		mListView = (ListView) findViewById(R.id.srListView);
 		mAdapter = new ListItemArrayAdapter(this, mList);
@@ -86,7 +89,31 @@ public class ListActivity extends DrawerActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.list_menu, menu);
+
+		MenuItem shareItem = menu.findItem(R.id.shareList);
+		mShareActionProvider = (ShareActionProvider) shareItem
+				.getActionProvider();
+		mShareActionProvider.setShareIntent(getDefaultIntent());
+
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	private Intent getDefaultIntent() {
+		Intent sendIntent = new Intent();
+		sendIntent.setAction(Intent.ACTION_SEND);
+		sendIntent.putExtra(Intent.EXTRA_TEXT, mGroceryList.toString());
+		sendIntent.setType("text/plain");
+		return sendIntent;
+	}
+
+	private void updateShareIntent() {
+		if (mShareActionProvider != null) {
+			Intent sendIntent = new Intent();
+			sendIntent.setAction(Intent.ACTION_SEND);
+			sendIntent.putExtra(Intent.EXTRA_TEXT, mGroceryList.toString());
+			sendIntent.setType("text/plain");
+			mShareActionProvider.setShareIntent(sendIntent);
+		}
 	}
 
 	@Override
@@ -95,7 +122,6 @@ public class ListActivity extends DrawerActivity {
 		case R.id.addListItem:
 			showAddListItemDialog();
 			return true;
-
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -134,7 +160,7 @@ public class ListActivity extends DrawerActivity {
 									.getText().toString());
 							newListItem = new ListItem(name, quantity, price,
 									mGroceryList.getId());
-							updateTotal();
+							updateList();
 						} else {
 							newListItem = new ListItem(name, quantity,
 									mGroceryList.getId());
@@ -153,29 +179,49 @@ public class ListActivity extends DrawerActivity {
 		Intent newIntent = new Intent(ListActivity.this, ShoppingActivity.class);
 		// newIntent.putExtra(KEY_LIST_NAME, listName);
 		// newIntent.putExtra(KEY_LIST_TOSTRING, mList.toString());
-		startActivity(newIntent);
+		startActivityForResult(newIntent, 1);
 	}
 
-	public void updateTotal() {
+	public void updateList() {
+		updateShareIntent();
 		BigDecimal total = new BigDecimal("0.00");
 		for (ListItem l : mList) {
-			total.add(l.getPrice().multiply(new BigDecimal(l.getQuantity())));
+			total = total.add(
+					l.getPrice().multiply(new BigDecimal(l.getQuantity())))
+					.setScale(2, RoundingMode.HALF_UP);
 		}
-		// totalView.setText("$" + total.toString());
+		totalView.setText("$" + total.toString());
 	}
 
 	private void addListItem(ListItem listItem) {
 		mSqlAdapter.addListItem(listItem);
 		mSqlAdapter.setListItems(mList, mGroceryList.getId());
 		mAdapter.notifyDataSetChanged();
-		updateTotal();
+		updateList();
 	}
-	
-	private void deleteListItem(ListItem listItem){
+
+	private void deleteListItem(ListItem listItem) {
 		mSqlAdapter.deleteListItem(listItem);
 		mSqlAdapter.setListItems(mList, mGroceryList.getId());
 		mAdapter.notifyDataSetChanged();
-		updateTotal();
+		updateList();
+	}
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case 1:
+			Intent returnIntent = new Intent();
+			if (resultCode == Activity.RESULT_OK) {
+				int switchNum = data.getIntExtra(MainActivity.DELETE_SWITCH, 0);
+				if (switchNum != 0) {
+					returnIntent.putExtra(MainActivity.DELETE_SWITCH, 1);
+					returnIntent.putExtra(MainActivity.KEY_LIST_ID, listId);
+				}
+			}
+			setResult(RESULT_OK, returnIntent);
+			this.finish();
+			break;
+		}
 	}
 
 }

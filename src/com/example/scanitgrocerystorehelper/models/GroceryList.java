@@ -78,11 +78,11 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 		ArrayList<ListItem> nList = new ArrayList<ListItem>();
 		GroceryList ret = new GroceryList(splitted[0], splitted[1]);
 		String[] lItems = splitted[2].split("/");
-//		for (String nItem : lItems) {
-//			String[] item = nItem.split(",");
-//			nList.add(new ListItem(item[0], Integer.parseInt(item[1]),
-//					new BigDecimal(item[2])));
-//		}
+		for (String nItem : lItems) {
+			String[] item = nItem.split(",");
+			nList.add(new ListItem(item[0], Integer.parseInt(item[1]),
+					new BigDecimal(item[2]), this.getId()));
+		}
 		// ret.setDateCreated(new Date(splitted[3]));
 		// ret.setDateModified(new Date(splitted[4]));
 		// ret.setAuthor(splitted[5]);

@@ -7,6 +7,7 @@ import com.example.scanitgrocerystorehelper.adapters.sql.ListSqlAdapter;
 import com.example.scanitgrocerystorehelper.models.GroceryList;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -31,6 +32,7 @@ public class MainActivity extends DrawerActivity {
 	private ListArrayAdapter mAdapter;
 	private ListSqlAdapter mSqlAdapter;
 	public static final String KEY_LIST_ID = "KEY_LIST_ID";
+	static final String DELETE_SWITCH = "Delete";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,7 @@ public class MainActivity extends DrawerActivity {
 				Intent newIntent = new Intent(MainActivity.this,
 						ListActivity.class);
 				newIntent.putExtra(KEY_LIST_ID, gl.getId());
-				startActivity(newIntent);
+				startActivityForResult(newIntent, 1);
 			}
 		});
 
@@ -152,5 +154,19 @@ public class MainActivity extends DrawerActivity {
 		mSqlAdapter.deleteList(gl);
 		mSqlAdapter.setAllLists(mGroceryLists);
 		mAdapter.notifyDataSetChanged();
+	}
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case 1:
+			if (resultCode == Activity.RESULT_OK) {
+				int switchNum = data.getIntExtra(DELETE_SWITCH, 0);
+				if (switchNum != 0) {
+					long newNum = data.getLongExtra(KEY_LIST_ID, 0);
+					if (newNum != 0)
+						deleteList(mSqlAdapter.getList(newNum));
+				}
+			}
+		}
 	}
 }

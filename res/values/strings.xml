@@ -33,7 +33,7 @@
     <string name="start_shopping">Start shopping!</string>
     <string name="done_shopping">Done shopping</string>
     <string name="reuse_dialog_title">Reuse this list?</string>
-    <string name="reuse_dialog_message">Would you like to reuse</string>
+    <string name="reuse_dialog_message">Would you like to reuse this list?</string>
     <string name="item">Item</string>
     <string name="quantity">Quantity</string>
     <string name="price">Price</string>
@@ -44,5 +44,7 @@
     <string name="expires_formated">Your %1$s expires in %2$d days</string>
     <string name="expired_formated">Your %s is expired</string>
     <string name="last_modified">Last modified %s</string>
+    <string name="share">Share</string>
+    <string name="send_to">Share list to...</string>
 
 </resources>

@@ -36,13 +36,13 @@ public class ShoppingActivity extends Activity {
 		IntentIntegrator it = new IntentIntegrator(this);
 		it.initiateScan();
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		IntentResult scanResult = IntentIntegrator.parseActivityResult(
 				requestCode, resultCode, data);
 		if (scanResult != null) {
-			TextView t = (TextView)findViewById(R.id.shoppingTextView);
+			TextView t = (TextView) findViewById(R.id.shoppingTextView);
 			Log.d(DrawerActivity.SCANIT, scanResult.getContents());
 			new BarcodeLookup().execute(t, scanResult.getContents());
 		}
@@ -50,13 +50,13 @@ public class ShoppingActivity extends Activity {
 	}
 
 	private class BarcodeLookup extends AsyncTask<Object, Void, String> {
-		private TextView textView; 
-		
+		private TextView textView;
+
 		@Override
 		protected String doInBackground(Object... params) {
-			textView = (TextView)params[0];
-			String code = (String)params[1];
-			Log.d(DrawerActivity.SCANIT, code);			
+			textView = (TextView) params[0];
+			String code = (String) params[1];
+			Log.d(DrawerActivity.SCANIT, code);
 
 			String url = "http://www.searchupc.com/handlers/upcsearch.ashx?request_type=3&access_token=642FC14C-D4C2-46F3-91BB-784855F3DCCE&upc=";
 			url += code;
@@ -100,12 +100,12 @@ public class ShoppingActivity extends Activity {
 			JsonElement element = parser.parse(result);
 			String s = "";
 			if (element.isJsonObject()) {
-	            JsonObject results = element.getAsJsonObject();
-	            JsonObject first = results.getAsJsonObject("0");
-	            s += first.get("productname").getAsString();
-	            s += " ";
-	            s += first.get("imageurl").getAsString();
-	        }
+				JsonObject results = element.getAsJsonObject();
+				JsonObject first = results.getAsJsonObject("0");
+				s += first.get("productname").getAsString();
+				s += " ";
+				s += first.get("imageurl").getAsString();
+			}
 			textView.setText(s);
 		}
 	}
@@ -118,20 +118,22 @@ public class ShoppingActivity extends Activity {
 		builder.setPositiveButton("Reuse",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						Toast.makeText(ShoppingActivity.this,
-								"This one's a keeper",
-								Toast.LENGTH_LONG).show();
+						Intent returnIntent = new Intent();
+						returnIntent.putExtra(MainActivity.DELETE_SWITCH, 0);
+						setResult(RESULT_OK, returnIntent);
+						ShoppingActivity.this.finish();
 					}
 				});
 		builder.setNegativeButton("Delete",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						Toast.makeText(ShoppingActivity.this,
-								"I'm gonna wreck it!",
-								Toast.LENGTH_LONG).show();
+						Intent returnIntent = new Intent();
+						returnIntent.putExtra(MainActivity.DELETE_SWITCH, 1);
+						setResult(RESULT_OK, returnIntent);
+						ShoppingActivity.this.finish();
 					}
 				});
-		
+
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}
