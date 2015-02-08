@@ -6,12 +6,18 @@ import java.util.ArrayList;
 
 import com.example.scanitgrocerystorehelper.adapters.ListItemArrayAdapter;
 import com.example.scanitgrocerystorehelper.adapters.sql.ListSqlAdapter;
+import com.example.scanitgrocerystorehelper.dialogs.EnsureBarcodeOutputDialog;
+
 import com.example.scanitgrocerystorehelper.models.GroceryList;
 import com.example.scanitgrocerystorehelper.models.ListItem;
+import com.example.scanitgrocerystorehelper.utils.BarcodeLookup;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -122,8 +128,53 @@ public class ListActivity extends DrawerActivity {
 		case R.id.addListItem:
 			showAddListItemDialog();
 			return true;
+		case R.id.scanItem:
+			IntentIntegrator it = new IntentIntegrator(this);
+			it.initiateScan();
+			return true;
+
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case 1:
+			Intent returnIntent = new Intent();
+			if (resultCode == Activity.RESULT_OK) {
+				int switchNum = data.getIntExtra(MainActivity.DELETE_SWITCH, 0);
+				if (switchNum != 0) {
+					returnIntent.putExtra(MainActivity.DELETE_SWITCH, 1);
+					returnIntent.putExtra(MainActivity.KEY_LIST_ID, listId);
+				}
+			}
+			setResult(RESULT_OK, returnIntent);
+			this.finish();
+			break;
+		
+		case IntentIntegrator.REQUEST_CODE:
+		IntentResult scanResult = IntentIntegrator.parseActivityResult(
+				requestCode, resultCode, data);
+		if (scanResult != null && scanResult.getContents() != null) {
+			new BarcodeLookup(this).execute(new EnsureLookupAddDialog(this),
+					scanResult.getContents());
+		}
+		}
+	}
+
+	private class EnsureLookupAddDialog extends EnsureBarcodeOutputDialog {
+
+		public EnsureLookupAddDialog(Context context) {
+			super(context);
+		}
+
+		@Override
+		public void handleClick(DialogInterface dialog, int which,
+				String productName) {
+			ListItem li = new ListItem(productName, 1, mGroceryList.getId());
+			addListItem(li);
 		}
 	}
 
@@ -205,23 +256,6 @@ public class ListActivity extends DrawerActivity {
 		mSqlAdapter.setListItems(mList, mGroceryList.getId());
 		mAdapter.notifyDataSetChanged();
 		updateList();
-	}
-
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case 1:
-			Intent returnIntent = new Intent();
-			if (resultCode == Activity.RESULT_OK) {
-				int switchNum = data.getIntExtra(MainActivity.DELETE_SWITCH, 0);
-				if (switchNum != 0) {
-					returnIntent.putExtra(MainActivity.DELETE_SWITCH, 1);
-					returnIntent.putExtra(MainActivity.KEY_LIST_ID, listId);
-				}
-			}
-			setResult(RESULT_OK, returnIntent);
-			this.finish();
-			break;
-		}
 	}
 
 }

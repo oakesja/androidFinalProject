@@ -3,17 +3,23 @@
     xmlns:myapp="http://schemas.android.com/apk/res-auto" >
 
     <item
+        android:id="@+id/shareList"
+        android:actionProviderClass="android.widget.ShareActionProvider"
+        android:icon="@drawable/ic_action_share"
+        android:showAsAction="always"
+        android:title="@string/share">
+    </item>
+    <item
+        android:id="@+id/scanItem"
+        android:icon="@drawable/ic_action_barcode_light"
+        android:showAsAction="ifRoom"
+        android:title="@string/scan_item">
+    </item>
+    <item
         android:id="@+id/addListItem"
         android:icon="@drawable/ic_action_new"
         android:showAsAction="always"
         android:title="@string/add">
-    </item>
-    <item
-        android:id="@+id/shareList"
-        android:icon="@drawable/ic_action_share"
-        android:title="@string/share"
-        android:actionProviderClass="android.widget.ShareActionProvider"
-        android:showAsAction="always">
     </item>
 
 </menu>
