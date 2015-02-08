@@ -116,8 +116,7 @@ public class ListActivity extends DrawerActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		IntentResult scanResult = IntentIntegrator.parseActivityResult(
 				requestCode, resultCode, data);
-		if (scanResult != null) {
-			Log.d(DrawerActivity.SCANIT, scanResult.getContents());
+		if (scanResult != null && scanResult.getContents() != null) {
 			new BarcodeLookup(this).execute(new EnsureLookupAddDialog(this),
 					scanResult.getContents());
 		}
