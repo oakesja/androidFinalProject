@@ -2,7 +2,7 @@ package com.example.scanitgrocerystorehelper.adapters.sql;
 
 public class SqlAdapterKeys {
 	public static final String DATABASE_NAME = "scanit.db";
-	public static final int DATABASE_VERSION = 10;
+	public static final int DATABASE_VERSION = 11;
 	
 	public static final String GENERAL_TABLE = "general";
 	public static final String EXP_TABLE = "exp";

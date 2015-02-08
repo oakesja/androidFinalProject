@@ -69,13 +69,13 @@ public class ReminderSqlAdapter {
 			String table = mTableNameLookup.get(c);
 			Cursor cursor = mDatabase.query(table, columns, null, null, null,
 					null, null);
-			if (cursor == null) {
+			if (cursor == null || !cursor.moveToFirst()) {
 				return;
 			}
-			while (cursor.moveToNext()) {
+			do {
 				Reminder r = getTaskFromCursor(c, cursor);
 				reminders.add(r);
-			}
+			} while (cursor.moveToNext());
 		}
 		Collections.sort(reminders);
 	}
@@ -88,15 +88,15 @@ public class ReminderSqlAdapter {
 			String table = mTableNameLookup.get(c);
 			Cursor cursor = mDatabase.query(table, null,
 					SqlAdapterKeys.KEY_NOTIFY + "=1", null, null, null, null);
-			if (cursor == null) {
+			if (cursor == null || cursor.moveToFirst()) {
 				Log.d(DrawerActivity.SCANIT, "none found");
 				continue;
 			}
-			while (cursor.moveToNext()) {
+			do {
 				Reminder r = getTaskFromCursor(c, cursor);
 				Log.d(DrawerActivity.SCANIT, "found " + r);
 				reminders.add(r);
-			}
+			} while (cursor.moveToNext());
 		}
 		return reminders;
 	}
