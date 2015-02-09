@@ -24,6 +24,7 @@ import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.Gravity;
@@ -75,6 +76,7 @@ public abstract class DrawerActivity extends Activity {
 					IntentIntegrator it = new IntentIntegrator(
 							DrawerActivity.this);
 					it.initiateScan();
+					Log.d(SCANIT, "start scan drawer activity");
 					mDrawerLayout.closeDrawer(Gravity.START);
 				}
 			}
@@ -162,12 +164,16 @@ public abstract class DrawerActivity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		IntentResult scanResult = IntentIntegrator.parseActivityResult(
-				requestCode, resultCode, data);
-		if (scanResult != null && scanResult.getContents() != null) {
-			new BarcodeLookup(this).execute(new EnsureLookupSelectListDialog(
-					this), scanResult.getContents());
+		Log.d(SCANIT, "request code is " + requestCode);
+		if (requestCode == IntentIntegrator.REQUEST_CODE) {
+			super.onActivityResult(requestCode, resultCode, data);
+			IntentResult scanResult = IntentIntegrator.parseActivityResult(
+					requestCode, resultCode, data);
+			if (scanResult != null && scanResult.getContents() != null) {
+				new BarcodeLookup(this).execute(
+						new EnsureLookupSelectListDialog(this),
+						scanResult.getContents());
+			}
 		}
 	}
 

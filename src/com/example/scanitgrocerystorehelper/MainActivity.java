@@ -157,6 +157,7 @@ public class MainActivity extends DrawerActivity {
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
 		case 1:
 			if (resultCode == Activity.RESULT_OK) {
