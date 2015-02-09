@@ -56,5 +56,8 @@
     <string name="zip_code_dialog_title">Enter ZIP Code to look for deal</string>
     <string name="share_lookup_title">Share product name</string>
     <string name="share_lookup_message">Would you like to share this product name so that you and others can use it for future lookups?</string>
+    <string name="say_item">Say the name of the item you want to add</string>
+    <string name="speech_not_supported">Speech input is not supported on this device</string>
+    <string name="select_correct_name">Select correct item name</string>
 
 </resources>
