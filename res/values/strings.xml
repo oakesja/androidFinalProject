@@ -35,8 +35,8 @@
     <string name="reuse_dialog_title">Reuse this list?</string>
     <string name="reuse_dialog_message">Would you like to reuse this list?</string>
     <string name="item">Item</string>
-    <string name="quantity">Quantity</string>
-    <string name="price">Price</string>
+    <string name="quantity">Quantity (optional)</string>
+    <string name="price">Price (optional)</string>
     <string name="plus">+</string>
     <string name="coupon_message">Select list to find deals for</string>
     <string name="expires_today">Your %s expires today</string>

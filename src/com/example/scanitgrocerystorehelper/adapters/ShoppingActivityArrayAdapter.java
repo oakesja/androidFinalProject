@@ -22,7 +22,8 @@ public class ShoppingActivityArrayAdapter extends ArrayAdapter<ListItem> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = super.getView(position, convertView, parent);
 		ListItem item = getItem(position);
-		String s = item.getQuantity() + " - " + item.getName();
+		String s = (item.getQuantity() == -1) ? item.getName() : item
+				.getQuantity() + " - " + item.getName();
 		TextView tv = (TextView) v.findViewById(android.R.id.text1);
 		tv.setText(s);
 		if (item.isCheckedOff()) {
