@@ -153,14 +153,15 @@ public class ListActivity extends DrawerActivity {
 			setResult(RESULT_OK, returnIntent);
 			this.finish();
 			break;
-		
+
 		case IntentIntegrator.REQUEST_CODE:
-		IntentResult scanResult = IntentIntegrator.parseActivityResult(
-				requestCode, resultCode, data);
-		if (scanResult != null && scanResult.getContents() != null) {
-			new BarcodeLookup(this).execute(new EnsureLookupAddDialog(this),
-					scanResult.getContents());
-		}
+			IntentResult scanResult = IntentIntegrator.parseActivityResult(
+					requestCode, resultCode, data);
+			if (scanResult != null && scanResult.getContents() != null) {
+				new BarcodeLookup(this).execute(
+						new EnsureLookupAddDialog(this),
+						scanResult.getContents());
+			}
 		}
 	}
 
@@ -204,8 +205,8 @@ public class ListActivity extends DrawerActivity {
 
 						ListItem newListItem;
 						String name = nameView.getText().toString();
-						int quantity = Integer.parseInt(quantityView.getText()
-								.toString());
+						String quant = quantityView.getText().toString();
+						int quantity = (quant.length() == 0) ? -1 : Integer.parseInt(quant);
 						if (priceView.getText().length() != 0) {
 							BigDecimal price = new BigDecimal(priceView
 									.getText().toString());
@@ -228,8 +229,7 @@ public class ListActivity extends DrawerActivity {
 
 	public void startShopping(View v) {
 		Intent newIntent = new Intent(ListActivity.this, ShoppingActivity.class);
-		// newIntent.putExtra(KEY_LIST_NAME, listName);
-		// newIntent.putExtra(KEY_LIST_TOSTRING, mList.toString());
+		newIntent.putExtra(MainActivity.KEY_LIST_ID, mGroceryList.getId());
 		startActivityForResult(newIntent, 1);
 	}
 
