@@ -12,13 +12,13 @@
     <item
         android:id="@+id/sayItem"
         android:icon="@drawable/ic_action_mic"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/say_item">
     </item>
     <item
         android:id="@+id/scanItem"
         android:icon="@drawable/ic_action_barcode_light"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/scan_item">
     </item>
     <item
