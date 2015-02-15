@@ -1,6 +1,8 @@
 package com.example.scanitgrocerystorehelper;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import com.example.scanitgrocerystorehelper.adapters.ShoppingActivityArrayAdapter;
 import com.example.scanitgrocerystorehelper.adapters.sql.ListSqlAdapter;
@@ -46,6 +48,7 @@ public class ShoppingActivity extends Activity {
 					int position, long id) {
 				ListItem li = mArrayAdapter.getItem(position);
 				li.setCheckedOff(!li.isCheckedOff());
+				Collections.sort(mList);
 				mArrayAdapter.notifyDataSetChanged();
 			}
 		});

@@ -156,6 +156,12 @@ public class ListItem implements Comparable<ListItem>, IContentValueizer {
 
 	@Override
 	public int compareTo(ListItem another) {
-		return this.addTime.compareTo(another.addTime);
+		int comp = 0;
+		if(this.checkedOff && !another.checkedOff){
+			comp = 1;
+		} else if(!this.checkedOff && another.checkedOff){
+			comp = -1;
+		}
+		return (comp == 0) ? this.addTime.compareTo(another.addTime) : comp;
 	}
 }
