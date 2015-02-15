@@ -61,7 +61,7 @@ public class ReminderActivity extends DrawerActivity {
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				showDeleteReminderDialog(position);
-				return false;
+				return true;
 			}
 		});
 

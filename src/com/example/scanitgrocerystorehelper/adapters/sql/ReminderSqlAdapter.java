@@ -66,11 +66,12 @@ public class ReminderSqlAdapter {
 		String[] columns = null;
 		reminders.clear();
 		for (Class<?> c : mTableNameLookup.keySet()) {
+			Log.d(DrawerActivity.SCANIT, "class is " + c);
 			String table = mTableNameLookup.get(c);
 			Cursor cursor = mDatabase.query(table, columns, null, null, null,
 					null, null);
 			if (cursor == null || !cursor.moveToFirst()) {
-				return;
+				continue;
 			}
 			do {
 				Reminder r = getTaskFromCursor(c, cursor);

@@ -43,7 +43,7 @@ public class ReminderArrayAdapter extends ArrayAdapter<Reminder> {
 			@Override
 			public void onClick(View v) {
 				r.setWillNotify(!r.isWillNotify());
-				handleNotification(r);
+				checkCancelReminder(r);
 				ReminderActivity ra = (ReminderActivity) mContext;
 				ra.updateReminder(r);
 			}
@@ -51,7 +51,7 @@ public class ReminderArrayAdapter extends ArrayAdapter<Reminder> {
 		return v;
 	}
 
-	private void handleNotification(Reminder r) {
+	private void checkCancelReminder(Reminder r) {
 		Log.d(DrawerActivity.SCANIT, "handle notification");
 		Intent myIntent = new Intent(mContext, AlarmReceiver.class);
 		myIntent.putExtra(AlarmReceiver.REMINDER_KEY, r);
@@ -63,17 +63,8 @@ public class ReminderArrayAdapter extends ArrayAdapter<Reminder> {
 
 		if (pendingIntent != null && !r.isWillNotify()) {
 			Log.d(DrawerActivity.SCANIT, "deleting alarm");
-
 			alarmManager.cancel(pendingIntent);
 			pendingIntent.cancel();
-		} else if (r.isWillNotify()) {
-			Log.d(DrawerActivity.SCANIT, "creating alarm");
-
-			GregorianCalendar gc = r.getCalendar();
-			gc.set(GregorianCalendar.SECOND, 0);
-
-			alarmManager.set(AlarmManager.RTC, gc.getTimeInMillis(),
-					pendingIntent);
 		}
 	}
 
