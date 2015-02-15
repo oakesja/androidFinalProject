@@ -3,11 +3,11 @@ package com.example.scanitgrocerystorehelper;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.example.scanitgrocerystorehelper.adapters.ListItemArrayAdapter;
 import com.example.scanitgrocerystorehelper.adapters.sql.ListSqlAdapter;
 import com.example.scanitgrocerystorehelper.dialogs.EnsureBarcodeOutputDialog;
-
 import com.example.scanitgrocerystorehelper.models.GroceryList;
 import com.example.scanitgrocerystorehelper.models.ListItem;
 import com.example.scanitgrocerystorehelper.utils.BarcodeLookup;
@@ -17,10 +17,16 @@ import com.google.zxing.integration.android.IntentResult;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +50,7 @@ public class ListActivity extends DrawerActivity {
 	private ListSqlAdapter mSqlAdapter;
 	private ShareActionProvider mShareActionProvider;
 	private long listId;
+	private final int REQ_CODE_SPEECH_INPUT = 100;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,11 +71,11 @@ public class ListActivity extends DrawerActivity {
 		TextView mHeader = (TextView) findViewById(R.id.list_header);
 		mHeader.setText(mGroceryList.getName());
 
-		updateList();
-
 		mListView = (ListView) findViewById(R.id.srListView);
 		mAdapter = new ListItemArrayAdapter(this, mList);
 		mListView.setAdapter(mAdapter);
+		
+		updateList();
 
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -132,6 +139,8 @@ public class ListActivity extends DrawerActivity {
 			IntentIntegrator it = new IntentIntegrator(this);
 			it.initiateScan();
 			return true;
+		case R.id.sayItem:
+			promptSpeechInput();
 
 		default:
 			return super.onOptionsItemSelected(item);
@@ -141,26 +150,48 @@ public class ListActivity extends DrawerActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-		case 1:
+		case MainActivity.SHOPPING_REQUEST_CODE:
 			Intent returnIntent = new Intent();
 			if (resultCode == Activity.RESULT_OK) {
-				int switchNum = data.getIntExtra(MainActivity.DELETE_SWITCH, 0);
-				if (switchNum != 0) {
-					returnIntent.putExtra(MainActivity.DELETE_SWITCH, 1);
+				int action = data.getIntExtra(
+						MainActivity.DONE_SHOPPING_ACTION, -1);
+				if (action != -1) {
+					returnIntent.putExtra(MainActivity.DONE_SHOPPING_ACTION,
+							action);
 					returnIntent.putExtra(MainActivity.KEY_LIST_ID, listId);
+					setResult(RESULT_OK, returnIntent);
+					this.finish();
+				} 
+			}
+			updateList();
+			break;
+
+		case IntentIntegrator.REQUEST_CODE:
+			IntentResult scanResult = IntentIntegrator.parseActivityResult(
+					requestCode, resultCode, data);
+			if (scanResult != null && scanResult.getContents() != null) {
+				new BarcodeLookup(this).execute(
+						new EnsureLookupAddDialog(this),
+						scanResult.getContents());
+			}
+			break;
+		case REQ_CODE_SPEECH_INPUT: {
+			if (resultCode == RESULT_OK && null != data) {
+
+				ArrayList<String> result = data
+						.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+				if (result.size() == 1) {
+					ListItem li = new ListItem(result.get(0), 1,
+							mGroceryList.getId());
+					addListItem(li);
+				} else {
+					selectCorrectSpeechResultDialog(result);
 				}
 			}
-			setResult(RESULT_OK, returnIntent);
-			this.finish();
 			break;
-		
-		case IntentIntegrator.REQUEST_CODE:
-		IntentResult scanResult = IntentIntegrator.parseActivityResult(
-				requestCode, resultCode, data);
-		if (scanResult != null && scanResult.getContents() != null) {
-			new BarcodeLookup(this).execute(new EnsureLookupAddDialog(this),
-					scanResult.getContents());
 		}
+		default:
+			break;
 		}
 	}
 
@@ -176,6 +207,31 @@ public class ListActivity extends DrawerActivity {
 			ListItem li = new ListItem(productName, 1, mGroceryList.getId());
 			addListItem(li);
 		}
+	}
+
+	private void selectCorrectSpeechResultDialog(final ArrayList<String> options) {
+		DialogFragment df = new DialogFragment() {
+			@Override
+			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						ListActivity.this);
+				builder.setTitle(R.string.select_correct_name);
+				builder.setItems(
+						options.toArray(new CharSequence[options.size()]),
+						new OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								ListItem li = new ListItem(options.get(which),
+										1, mGroceryList.getId());
+								addListItem(li);
+							}
+						});
+				return builder.create();
+			}
+		};
+		df.show(getFragmentManager(), "speech options");
 	}
 
 	@Override
@@ -204,8 +260,9 @@ public class ListActivity extends DrawerActivity {
 
 						ListItem newListItem;
 						String name = nameView.getText().toString();
-						int quantity = Integer.parseInt(quantityView.getText()
-								.toString());
+						String quant = quantityView.getText().toString();
+						int quantity = (quant.length() == 0) ? -1 : Integer
+								.parseInt(quant);
 						if (priceView.getText().length() != 0) {
 							BigDecimal price = new BigDecimal(priceView
 									.getText().toString());
@@ -228,12 +285,13 @@ public class ListActivity extends DrawerActivity {
 
 	public void startShopping(View v) {
 		Intent newIntent = new Intent(ListActivity.this, ShoppingActivity.class);
-		// newIntent.putExtra(KEY_LIST_NAME, listName);
-		// newIntent.putExtra(KEY_LIST_TOSTRING, mList.toString());
+		newIntent.putExtra(MainActivity.KEY_LIST_ID, mGroceryList.getId());
 		startActivityForResult(newIntent, 1);
 	}
 
 	public void updateList() {
+		mSqlAdapter.setListItems(mList, mGroceryList.getId());
+		mAdapter.notifyDataSetChanged();
 		updateShareIntent();
 		BigDecimal total = new BigDecimal("0.00");
 		for (ListItem l : mList) {
@@ -256,6 +314,22 @@ public class ListActivity extends DrawerActivity {
 		mSqlAdapter.setListItems(mList, mGroceryList.getId());
 		mAdapter.notifyDataSetChanged();
 		updateList();
+	}
+
+	private void promptSpeechInput() {
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+				getString(R.string.say_item));
+		try {
+			startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+		} catch (ActivityNotFoundException a) {
+			Toast.makeText(getApplicationContext(),
+					getString(R.string.speech_not_supported),
+					Toast.LENGTH_SHORT).show();
+		}
 	}
 
 }

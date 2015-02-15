@@ -6,13 +6,19 @@
         android:id="@+id/shareList"
         android:actionProviderClass="android.widget.ShareActionProvider"
         android:icon="@drawable/ic_action_share"
-        android:showAsAction="always"
+        android:showAsAction="ifRoom"
         android:title="@string/share">
+    </item>
+    <item
+        android:id="@+id/sayItem"
+        android:icon="@drawable/ic_action_mic"
+        android:showAsAction="always"
+        android:title="@string/say_item">
     </item>
     <item
         android:id="@+id/scanItem"
         android:icon="@drawable/ic_action_barcode_light"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/scan_item">
     </item>
     <item

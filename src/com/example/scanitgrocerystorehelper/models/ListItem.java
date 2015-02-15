@@ -18,6 +18,7 @@ public class ListItem implements Comparable<ListItem>, IContentValueizer {
 	private int quantity;
 	private BigDecimal price;
 	private GregorianCalendar addTime;
+	private boolean checkedOff;
 
 	public ListItem(String name, int quantity, long listId) {
 		this.itemName = name;
@@ -25,6 +26,7 @@ public class ListItem implements Comparable<ListItem>, IContentValueizer {
 		this.price = new BigDecimal(0).setScale(2, RoundingMode.HALF_UP);
 		this.listId = listId;
 		this.addTime = new GregorianCalendar();
+		this.checkedOff = false;
 	}
 
 	public ListItem(String name, int quantity, BigDecimal price, long listId) {
@@ -33,6 +35,7 @@ public class ListItem implements Comparable<ListItem>, IContentValueizer {
 		this.price = price.setScale(2, RoundingMode.HALF_UP);
 		this.listId = listId;
 		this.addTime = new GregorianCalendar();
+		this.checkedOff = false;
 	}
 
 	public ListItem() {
@@ -90,6 +93,14 @@ public class ListItem implements Comparable<ListItem>, IContentValueizer {
 		return itemName + "," + quantity + "," + price;
 	}
 
+	public boolean isCheckedOff() {
+		return checkedOff;
+	}
+
+	public void setCheckedOff(boolean checkedOff) {
+		this.checkedOff = checkedOff;
+	}
+
 	@Override
 	public ContentValues getContentValue() {
 		ContentValues row = new ContentValues();
@@ -137,12 +148,20 @@ public class ListItem implements Comparable<ListItem>, IContentValueizer {
 				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_SECOND));
 		this.id = cursor.getLong(cursor
 				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_ID));
-		this.addTime = new GregorianCalendar(year, month, day, hour, minute, second);
+		this.addTime = new GregorianCalendar(year, month, day, hour, minute,
+				second);
+		this.checkedOff = false;
 		return this;
 	}
 
 	@Override
 	public int compareTo(ListItem another) {
-		return this.addTime.compareTo(another.addTime);
+		int comp = 0;
+		if(this.checkedOff && !another.checkedOff){
+			comp = 1;
+		} else if(!this.checkedOff && another.checkedOff){
+			comp = -1;
+		}
+		return (comp == 0) ? this.addTime.compareTo(another.addTime) : comp;
 	}
 }
