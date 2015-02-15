@@ -61,5 +61,7 @@
     <string name="reuse_all">Reuse entire list</string>
     <string name="reuse_part">Reuse items not marked off</string>
     <string name="delete_all">Delete list</string>
+    <string name="use_current_location">Use current location</string>
+    <string name="finding_current_location">Finding current location</string>
 
 </resources>
