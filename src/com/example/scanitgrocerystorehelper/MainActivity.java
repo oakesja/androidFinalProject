@@ -32,7 +32,8 @@ public class MainActivity extends DrawerActivity {
 	private ListArrayAdapter mAdapter;
 	private ListSqlAdapter mSqlAdapter;
 	public static final String KEY_LIST_ID = "KEY_LIST_ID";
-	static final String DELETE_SWITCH = "Delete";
+	static final String DONE_SHOPPING_ACTION = "DONE_SHOPPING_ACTION";
+	static final int SHOPPING_REQUEST_CODE = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -159,9 +160,9 @@ public class MainActivity extends DrawerActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
-		case 1:
+		case SHOPPING_REQUEST_CODE:
 			if (resultCode == Activity.RESULT_OK) {
-				int switchNum = data.getIntExtra(DELETE_SWITCH, 0);
+				int switchNum = data.getIntExtra(DONE_SHOPPING_ACTION, 0);
 				if (switchNum != 0) {
 					long newNum = data.getLongExtra(KEY_LIST_ID, 0);
 					if (newNum != 0)

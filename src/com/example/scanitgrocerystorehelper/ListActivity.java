@@ -26,6 +26,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,11 +71,11 @@ public class ListActivity extends DrawerActivity {
 		TextView mHeader = (TextView) findViewById(R.id.list_header);
 		mHeader.setText(mGroceryList.getName());
 
-		updateList();
-
 		mListView = (ListView) findViewById(R.id.srListView);
 		mAdapter = new ListItemArrayAdapter(this, mList);
 		mListView.setAdapter(mAdapter);
+		
+		updateList();
 
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -149,17 +150,20 @@ public class ListActivity extends DrawerActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-		case 1:
+		case MainActivity.SHOPPING_REQUEST_CODE:
 			Intent returnIntent = new Intent();
 			if (resultCode == Activity.RESULT_OK) {
-				int switchNum = data.getIntExtra(MainActivity.DELETE_SWITCH, 0);
-				if (switchNum != 0) {
-					returnIntent.putExtra(MainActivity.DELETE_SWITCH, 1);
+				int action = data.getIntExtra(
+						MainActivity.DONE_SHOPPING_ACTION, -1);
+				if (action != -1) {
+					returnIntent.putExtra(MainActivity.DONE_SHOPPING_ACTION,
+							action);
 					returnIntent.putExtra(MainActivity.KEY_LIST_ID, listId);
-				}
+					setResult(RESULT_OK, returnIntent);
+					this.finish();
+				} 
 			}
-			setResult(RESULT_OK, returnIntent);
-			this.finish();
+			updateList();
 			break;
 
 		case IntentIntegrator.REQUEST_CODE:
@@ -286,6 +290,8 @@ public class ListActivity extends DrawerActivity {
 	}
 
 	public void updateList() {
+		mSqlAdapter.setListItems(mList, mGroceryList.getId());
+		mAdapter.notifyDataSetChanged();
 		updateShareIntent();
 		BigDecimal total = new BigDecimal("0.00");
 		for (ListItem l : mList) {
