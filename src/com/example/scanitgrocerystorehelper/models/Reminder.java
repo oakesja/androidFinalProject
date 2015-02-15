@@ -33,7 +33,6 @@ public abstract class Reminder implements Comparable<Reminder>,
 	}
 
 	public Reminder(Parcel in) {
-		Log.d(DrawerActivity.SCANIT, "reminder create from parcel");
 		this.id = in.readInt();
 		int year = in.readInt();
 		int month = in.readInt();
@@ -46,7 +45,6 @@ public abstract class Reminder implements Comparable<Reminder>,
 	}
 
 	public void writeToParcel(Parcel out, int flags) {
-		Log.d(DrawerActivity.SCANIT, "reminder write to parcel");
 		out.writeInt((int) this.id);
 		out.writeInt(getYear());
 		out.writeInt(getMonth());

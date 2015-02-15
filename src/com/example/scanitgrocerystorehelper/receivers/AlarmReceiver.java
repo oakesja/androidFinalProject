@@ -16,6 +16,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		Reminder r = intent.getParcelableExtra(REMINDER_KEY);
 		Intent myIntent = new Intent(context, NotificationService.class);
+		Log.d(DrawerActivity.SCANIT, "alarm receiver");
 		myIntent.putExtra(REMINDER_KEY, r);
 		context.startService(myIntent);
 	}

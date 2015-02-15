@@ -72,7 +72,6 @@ public class GeneralReminder extends Reminder {
 
 	public static final Parcelable.Creator<GeneralReminder> CREATOR = new Parcelable.Creator<GeneralReminder>() {
 		public GeneralReminder createFromParcel(Parcel in) {
-			Log.d(DrawerActivity.SCANIT, "general reminder create from parcel");
 			return new GeneralReminder(in);
 		}
 
@@ -85,7 +84,6 @@ public class GeneralReminder extends Reminder {
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);
 		dest.writeString(name);
-		Log.d(DrawerActivity.SCANIT, "general reminder write to parcel");
 	}
 
 	public GeneralReminder(Parcel in) {
