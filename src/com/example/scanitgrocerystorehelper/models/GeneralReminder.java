@@ -37,7 +37,7 @@ public class GeneralReminder extends Reminder {
 
 	@Override
 	public String toString() {
-		SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyy HH:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyy hh:mm a");
 		sdf.setCalendar(getCalendar());
 		return this.name + " - " + sdf.format(getCalendar().getTime());
 	}
@@ -60,7 +60,7 @@ public class GeneralReminder extends Reminder {
 
 	@Override
 	public String getNotifcationText() {
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
 		sdf.setCalendar(getCalendar());
 		return this.name + " @ " + sdf.format(getCalendar().getTime());
 	}
@@ -72,7 +72,6 @@ public class GeneralReminder extends Reminder {
 
 	public static final Parcelable.Creator<GeneralReminder> CREATOR = new Parcelable.Creator<GeneralReminder>() {
 		public GeneralReminder createFromParcel(Parcel in) {
-			Log.d(DrawerActivity.SCANIT, "general reminder create from parcel");
 			return new GeneralReminder(in);
 		}
 
@@ -85,7 +84,6 @@ public class GeneralReminder extends Reminder {
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);
 		dest.writeString(name);
-		Log.d(DrawerActivity.SCANIT, "general reminder write to parcel");
 	}
 
 	public GeneralReminder(Parcel in) {

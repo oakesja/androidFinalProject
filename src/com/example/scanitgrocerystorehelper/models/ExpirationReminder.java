@@ -83,7 +83,6 @@ public class ExpirationReminder extends Reminder {
 
 	public static final Parcelable.Creator<ExpirationReminder> CREATOR = new Parcelable.Creator<ExpirationReminder>() {
 		public ExpirationReminder createFromParcel(Parcel in) {
-			Log.d(DrawerActivity.SCANIT, "expiration reminder create from parcel");
 			return new ExpirationReminder(in);
 		}
 
@@ -96,12 +95,10 @@ public class ExpirationReminder extends Reminder {
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);
 		dest.writeString(foodName);
-		Log.d(DrawerActivity.SCANIT, "expiration reminder write to parcel");
 	}
 
 	public ExpirationReminder(Parcel in) {
 		super(in);
 		foodName = in.readString();
-		Log.d(DrawerActivity.SCANIT, "expiration reminder parcel constructor " + foodName);
 	}
 }

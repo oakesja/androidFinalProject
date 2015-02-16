@@ -26,8 +26,8 @@ public class ListItemArrayAdapter extends ArrayAdapter<ListItem> {
 		ListItem item = getItem(position);
 		((TextView) v.findViewById(R.id.customRowItem1))
 				.setText(item.getName());
-		((TextView) v.findViewById(R.id.customRowItem2)).setText(""
-				+ item.getQuantity());
+		String quant = (item.getQuantity() == -1) ? "-" : "" + item.getQuantity();
+		((TextView) v.findViewById(R.id.customRowItem2)).setText(quant);
 		String price = (item.getPrice().equals(new BigDecimal(0))) ? "-" : "$"
 				+ item.getPrice();
 		((TextView) v.findViewById(R.id.customRowItem3)).setText(price);

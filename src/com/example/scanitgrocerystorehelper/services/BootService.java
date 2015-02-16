@@ -34,8 +34,6 @@ public class BootService extends Service {
 		ArrayList<Reminder> reminders = mDatabaseAdapter
 				.getAllRemindersToNotify();
 		for (Reminder reminder : reminders) {
-			Log.d(DrawerActivity.SCANIT,
-					"creating notification " + reminder.getNotifcationText());
 			createPendingNotification(reminder);
 		}
 		mDatabaseAdapter.close();
