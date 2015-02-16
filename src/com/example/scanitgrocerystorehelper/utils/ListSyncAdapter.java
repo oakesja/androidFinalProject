@@ -1,6 +1,9 @@
 package com.example.scanitgrocerystorehelper.utils;
 
+import java.util.List;
+
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -12,6 +15,7 @@ public class ListSyncAdapter extends AbstractThreadedSyncAdapter {
 
 	// Global variables
 	// Define a variable to contain a content resolver instance
+	private final AccountManager mAccountManager;
 	ContentResolver mContentResolver;
 
 	/**
@@ -24,6 +28,7 @@ public class ListSyncAdapter extends AbstractThreadedSyncAdapter {
 		 * incoming Context
 		 */
 		mContentResolver = context.getContentResolver();
+		mAccountManager = AccountManager.get(context);
 	}
 
 	/**
@@ -38,13 +43,20 @@ public class ListSyncAdapter extends AbstractThreadedSyncAdapter {
 		 * incoming Context
 		 */
 		mContentResolver = context.getContentResolver();
+		mAccountManager = AccountManager.get(context);
 
 	}
 
 	@Override
 	public void onPerformSync(Account account, Bundle extras, String authority,
 			ContentProviderClient provider, SyncResult syncResult) {
-		// TODO Auto-generated method stub
+		//TODO Connect to a server
+		
+		//TODO Download/upload data
+		
+		//TODO Handle conflicts
+		
+		//TODO Cleanup (close connections, clean up temp files)
 
 	}
 }

@@ -26,7 +26,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,7 +73,7 @@ public class ListActivity extends DrawerActivity {
 		mListView = (ListView) findViewById(R.id.srListView);
 		mAdapter = new ListItemArrayAdapter(this, mList);
 		mListView.setAdapter(mAdapter);
-		
+
 		updateList();
 
 		mListView.setOnItemClickListener(new OnItemClickListener() {
@@ -114,7 +113,7 @@ public class ListActivity extends DrawerActivity {
 	private Intent getDefaultIntent() {
 		Intent sendIntent = new Intent();
 		sendIntent.setAction(Intent.ACTION_SEND);
-		sendIntent.putExtra(Intent.EXTRA_TEXT, mGroceryList.toString());
+		sendIntent.putExtra(Intent.EXTRA_TEXT, createShareMessage());
 		sendIntent.setType("text/plain");
 		return sendIntent;
 	}
@@ -123,7 +122,8 @@ public class ListActivity extends DrawerActivity {
 		if (mShareActionProvider != null) {
 			Intent sendIntent = new Intent();
 			sendIntent.setAction(Intent.ACTION_SEND);
-			sendIntent.putExtra(Intent.EXTRA_TEXT, mGroceryList.toString());
+
+			sendIntent.putExtra(Intent.EXTRA_TEXT, createShareMessage());
 			sendIntent.setType("text/plain");
 			mShareActionProvider.setShareIntent(sendIntent);
 		}
@@ -161,7 +161,7 @@ public class ListActivity extends DrawerActivity {
 					returnIntent.putExtra(MainActivity.KEY_LIST_ID, listId);
 					setResult(RESULT_OK, returnIntent);
 					this.finish();
-				} 
+				}
 			}
 			updateList();
 			break;
@@ -330,6 +330,18 @@ public class ListActivity extends DrawerActivity {
 					getString(R.string.speech_not_supported),
 					Toast.LENGTH_SHORT).show();
 		}
+	}
+
+	private String createShareMessage() {
+		String message = "Hi! Here's my list:\n";
+		message += mGroceryList.getName() + ": "
+				+ mGroceryList.getDescription();
+		message += "\n---------------------\n";
+		for (ListItem item : mList) {
+			message += item.getQuantity() + "\t" + item.getName() + "\t$"
+					+ item.getPrice() + "\n";
+		}
+		return message;
 	}
 
 }

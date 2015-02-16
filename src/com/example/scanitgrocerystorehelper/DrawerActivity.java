@@ -11,6 +11,7 @@ import com.example.scanitgrocerystorehelper.utils.BarcodeLookup;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -35,6 +36,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+@SuppressWarnings("deprecation")
 public abstract class DrawerActivity extends Activity {
 	public static final String SCANIT = "SCANIT";
 
@@ -47,6 +49,7 @@ public abstract class DrawerActivity extends Activity {
 	private TypedArray mDrawableIds;
 	private ListSqlAdapter mSqlAdapter;
 
+	@SuppressLint("InflateParams")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

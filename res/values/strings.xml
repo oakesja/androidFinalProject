@@ -63,5 +63,8 @@
     <string name="delete_all">Delete list</string>
     <string name="use_current_location">Use current location</string>
     <string name="finding_current_location">Finding current location</string>
+    <string name="about_title">About ScanIt</string>
+    <string name="about_text">ScanIt Grocery Store Helper v1.0\nCopyright pending\nJacob Oakes and Daniel Wells\n\nmail: wellsdb@rose-hulman.edu\n\ntwitter: @</string>
+    <string name="main_header">Your lists</string>
 
 </resources>

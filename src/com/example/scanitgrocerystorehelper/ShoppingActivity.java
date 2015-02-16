@@ -1,12 +1,10 @@
 package com.example.scanitgrocerystorehelper;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 import com.example.scanitgrocerystorehelper.adapters.ShoppingActivityArrayAdapter;
 import com.example.scanitgrocerystorehelper.adapters.sql.ListSqlAdapter;
-import com.example.scanitgrocerystorehelper.models.GroceryList;
 import com.example.scanitgrocerystorehelper.models.ListItem;
 
 import android.app.Activity;

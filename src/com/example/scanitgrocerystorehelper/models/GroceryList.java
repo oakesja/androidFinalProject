@@ -18,6 +18,7 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 	private GregorianCalendar modified;
 
 	public GroceryList() {
+
 	}
 
 	public GroceryList(String name, String description) {
@@ -70,6 +71,7 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 		ret.substring(0, ret.length() - 1);
 		ret += ";";
 		ret += ";" + modified;
+
 		return ret;
 	}
 

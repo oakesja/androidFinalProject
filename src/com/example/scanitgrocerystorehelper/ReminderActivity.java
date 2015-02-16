@@ -1,7 +1,6 @@
 package com.example.scanitgrocerystorehelper;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.GregorianCalendar;
 
 import com.example.scanitgrocerystorehelper.adapters.ReminderArrayAdapter;
@@ -11,6 +10,7 @@ import com.example.scanitgrocerystorehelper.models.GeneralReminder;
 import com.example.scanitgrocerystorehelper.models.Reminder;
 import com.example.scanitgrocerystorehelper.receivers.AlarmReceiver;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -144,6 +144,7 @@ public class ReminderActivity extends DrawerActivity {
 	}
 
 	// TODO abstract these out using template pattern
+	@SuppressLint("InflateParams")
 	private void enterExpirationReminderInfoDialog(
 			final ExpirationReminder reminderToUpdate) {
 		DialogFragment df = new DialogFragment() {
@@ -207,6 +208,7 @@ public class ReminderActivity extends DrawerActivity {
 	private void enterGeneralReminderInfoDialog(
 			final GeneralReminder reminderToUpdate) {
 		DialogFragment df = new DialogFragment() {
+			@SuppressLint("InflateParams")
 			@Override
 			public Dialog onCreateDialog(Bundle savedInstanceState) {
 				final View v = getLayoutInflater().inflate(
