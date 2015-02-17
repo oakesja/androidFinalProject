@@ -10,7 +10,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="@string/coupon_message" />
+        android:text="@string/coupon_message"
+        android:textSize="18sp"
+        android:layout_margin="10dp" />
 
     <ListView
         android:id="@+id/list_view"
