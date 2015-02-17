@@ -67,8 +67,6 @@ public class ListActivity extends DrawerActivity {
 		mSqlAdapter.setListItems(mList, mGroceryList.getId());
 
 		totalView = (TextView) findViewById(R.id.total_price);
-		TextView mHeader = (TextView) findViewById(R.id.list_header);
-		mHeader.setText(mGroceryList.getName());
 
 		mListView = (ListView) findViewById(R.id.srListView);
 		mAdapter = new ListItemArrayAdapter(this, mList);
@@ -96,6 +94,8 @@ public class ListActivity extends DrawerActivity {
 				return true;
 			}
 		});
+		
+		getActionBar().setTitle(mGroceryList.getName());
 	}
 
 	@Override
