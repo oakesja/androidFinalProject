@@ -19,25 +19,22 @@ import android.widget.TextView;
 public class ListItemArrayAdapter extends ArrayAdapter<ListItem> {
 
 	public ListItemArrayAdapter(Context context, List<ListItem> listItems) {
-		super(context, R.layout.custom_row_view, R.id.customRowItem1, listItems);
+		super(context, R.layout.item_row_view, R.id.titleRow, listItems);
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = super.getView(position, convertView, parent);
 		ListItem item = getItem(position);
-		
-		//Truncate item names if too long
-		String name = item.getName();
-		if(name.length() > 40){
-			name = name.substring(0, 37) + "...";
+
+		String s = (item.getQuantity() == -1) ? item.getName() : item
+				.getQuantity() + " - " + item.getName();
+		((TextView) v.findViewById(R.id.titleRow)).setText(s);
+
+		TextView price = (TextView) v.findViewById(R.id.subtitleRow);
+		if (!item.getPrice().equals(new BigDecimal(0))) {
+			price.setText("$"
+					+ item.getPrice().setScale(2, RoundingMode.HALF_UP));
 		}
-		((TextView) v.findViewById(R.id.customRowItem1))
-				.setText(name);
-		String quant = (item.getQuantity() == -1) ? "-" : "" + item.getQuantity();
-		((TextView) v.findViewById(R.id.customRowItem2)).setText(quant);
-		String price = (item.getPrice().equals(new BigDecimal(0))) ? "-" : "$"
-				+ item.getPrice().setScale(2, RoundingMode.HALF_UP);
-		((TextView) v.findViewById(R.id.customRowItem3)).setText(price);
 		return v;
 	}
 }

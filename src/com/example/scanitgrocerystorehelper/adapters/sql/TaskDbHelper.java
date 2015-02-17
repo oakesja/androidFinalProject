@@ -61,7 +61,8 @@ class TaskDbHelper extends SQLiteOpenHelper {
 		sb.append(SqlAdapterKeys.KEY_MONTH + " integer, ");
 		sb.append(SqlAdapterKeys.KEY_DAY + " integer, ");
 		sb.append(SqlAdapterKeys.KEY_HOUR + " integer, ");
-		sb.append(SqlAdapterKeys.KEY_MINUTE + " integer");
+		sb.append(SqlAdapterKeys.KEY_MINUTE + " integer, ");
+		sb.append(SqlAdapterKeys.KEY_SECOND + " integer");
 		sb.append(")");
 		CREATE_STATEMENT3 = sb.toString();
 	}
