@@ -2,6 +2,7 @@ package com.example.scanitgrocerystorehelper.models;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import com.example.scanitgrocerystorehelper.adapters.sql.SqlAdapterKeys;
@@ -26,6 +27,7 @@ public class ListItem implements Comparable<ListItem>, IContentValueizer {
 		this.price = new BigDecimal(0).setScale(2, RoundingMode.HALF_UP);
 		this.listId = listId;
 		this.addTime = new GregorianCalendar();
+		this.addTime.setTime(new Date());
 		this.checkedOff = false;
 	}
 

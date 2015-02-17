@@ -31,7 +31,9 @@ public class ListItemArrayAdapter extends ArrayAdapter<ListItem> {
 		((TextView) v.findViewById(R.id.titleRow)).setText(s);
 
 		TextView price = (TextView) v.findViewById(R.id.subtitleRow);
-		if (!item.getPrice().equals(new BigDecimal(0))) {
+		if (item.getPrice().equals(new BigDecimal(0))) {
+			price.setText("");
+		} else {
 			price.setText("$"
 					+ item.getPrice().setScale(2, RoundingMode.HALF_UP));
 		}

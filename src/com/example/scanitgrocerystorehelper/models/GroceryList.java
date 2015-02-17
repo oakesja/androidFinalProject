@@ -27,7 +27,6 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 	public GroceryList(String name, String description) {
 		this.modified = new GregorianCalendar();
 		this.modified.setTime(new Date());
-		Log.d(DrawerActivity.SCANIT, "" + this.getDateModified().get(GregorianCalendar.SECOND) + " " + this.getDateModified().getTimeInMillis());
 		this.name = name;
 		this.description = description;
 	}

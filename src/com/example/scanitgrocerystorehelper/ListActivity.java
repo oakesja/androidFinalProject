@@ -295,8 +295,9 @@ public class ListActivity extends DrawerActivity {
 		updateShareIntent();
 		BigDecimal total = new BigDecimal("0.00");
 		for (ListItem l : mList) {
+			int quant = (l.getQuantity() == -1) ? 1 : l.getQuantity();
 			total = total.add(
-					l.getPrice().multiply(new BigDecimal(l.getQuantity())))
+					l.getPrice().multiply(new BigDecimal(quant)))
 					.setScale(2, RoundingMode.HALF_UP);
 		}
 		totalView.setText("$" + total.toString());
