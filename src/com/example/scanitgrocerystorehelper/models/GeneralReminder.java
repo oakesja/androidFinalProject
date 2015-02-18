@@ -37,9 +37,7 @@ public class GeneralReminder extends Reminder {
 
 	@Override
 	public String toString() {
-		SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyy hh:mm a");
-		sdf.setCalendar(getCalendar());
-		return this.name + " - " + sdf.format(getCalendar().getTime());
+		return this.name;
 	}
 
 	@Override
@@ -89,5 +87,17 @@ public class GeneralReminder extends Reminder {
 	public GeneralReminder(Parcel in) {
 		super(in);
 		name = in.readString();
+	}
+
+	@Override
+	public boolean hasReminderTime() {
+		return true;
+	}
+
+	@Override
+	public String getReminderTime() {
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyy hh:mm a");
+		sdf.setCalendar(getCalendar());
+		return sdf.format(getCalendar().getTime());
 	}
 }
