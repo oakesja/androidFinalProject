@@ -101,4 +101,14 @@ public class ExpirationReminder extends Reminder {
 		super(in);
 		foodName = in.readString();
 	}
+
+	@Override
+	public boolean hasReminderTime() {
+		return false;
+	}
+
+	@Override
+	public String getReminderTime() {
+		return null;
+	}
 }

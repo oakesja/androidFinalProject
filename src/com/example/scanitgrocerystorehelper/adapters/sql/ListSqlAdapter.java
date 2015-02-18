@@ -38,6 +38,12 @@ public class ListSqlAdapter {
 		list.setId(rowId);
 	}
 
+	public void updateList(GroceryList list) {
+		ContentValues row = list.getContentValue();
+		mDatabase.update(SqlAdapterKeys.LIST_TABLE, row, SqlAdapterKeys.KEY_ID
+				+ " == " + list.getId(), null);
+	}
+
 	public void setAllLists(ArrayList<GroceryList> lists) {
 		lists.clear();
 		Cursor cursor = mDatabase.query(SqlAdapterKeys.LIST_TABLE, null, null,
@@ -76,6 +82,12 @@ public class ListSqlAdapter {
 		long rowId = mDatabase.insert(SqlAdapterKeys.LIST_ITEMS_TABLE, null,
 				row);
 		listItem.setId(rowId);
+	}
+
+	public void updateListItem(ListItem listItem) {
+		ContentValues row = listItem.getContentValue();
+		mDatabase.update(SqlAdapterKeys.LIST_ITEMS_TABLE, row,
+				SqlAdapterKeys.KEY_ID + " == " + listItem.getId(), null);
 	}
 
 	public void setListItems(ArrayList<ListItem> items, long listId) {

@@ -1,6 +1,5 @@
 package com.example.scanitgrocerystorehelper.adapters;
 
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import com.example.scanitgrocerystorehelper.DrawerActivity;
@@ -15,11 +14,15 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class ReminderArrayAdapter extends ArrayAdapter<Reminder> {
 	private Context mContext;
@@ -32,9 +35,24 @@ public class ReminderArrayAdapter extends ArrayAdapter<Reminder> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		View v = super.getView(position, convertView, parent);
-		ImageView iv = (ImageView) v.findViewById(R.id.reminderAlarm);
 		final Reminder r = getItem(position);
+		View row = null;
+		if (r.hasReminderTime()) {
+			LayoutInflater inflater = (LayoutInflater) getContext()
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			row = inflater.inflate(R.layout.reminder_with_time_list_item, null);
+		} else {
+			LayoutInflater inflater = (LayoutInflater) getContext()
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			row = inflater.inflate(R.layout.reminder_list_item, null);
+		}
+		if (r.hasReminderTime()) {
+			TextView timeTv = (TextView) row.findViewById(R.id.reminderTime);
+			timeTv.setText(r.getReminderTime());
+		}
+		((TextView)row.findViewById(R.id.reminderName)).setText(r.toString());
+		ImageView iv = (ImageView) row.findViewById(R.id.reminderAlarm);
+
 		int drawableId = (r.isWillNotify()) ? R.drawable.ic_action_alarm_on
 				: R.drawable.ic_action_alarm_add;
 		iv.setImageResource(drawableId);
@@ -48,7 +66,7 @@ public class ReminderArrayAdapter extends ArrayAdapter<Reminder> {
 				ra.updateReminder(r);
 			}
 		});
-		return v;
+		return row;
 	}
 
 	private void checkCancelReminder(Reminder r) {
@@ -57,7 +75,8 @@ public class ReminderArrayAdapter extends ArrayAdapter<Reminder> {
 		myIntent.putExtra(AlarmReceiver.REMINDER_KEY, r);
 
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext,
-				r.getPendingIntentId(), myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				r.getPendingIntentId(), myIntent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
 		AlarmManager alarmManager = (AlarmManager) mContext
 				.getSystemService(Service.ALARM_SERVICE);
 

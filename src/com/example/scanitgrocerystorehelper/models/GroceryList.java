@@ -2,13 +2,16 @@ package com.example.scanitgrocerystorehelper.models;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
+import com.example.scanitgrocerystorehelper.DrawerActivity;
 import com.example.scanitgrocerystorehelper.adapters.sql.SqlAdapterKeys;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 
@@ -23,6 +26,7 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 
 	public GroceryList(String name, String description) {
 		this.modified = new GregorianCalendar();
+		this.modified.setTime(new Date());
 		this.name = name;
 		this.description = description;
 	}
@@ -106,6 +110,8 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 				this.modified.get(GregorianCalendar.HOUR));
 		row.put(SqlAdapterKeys.KEY_MINUTE,
 				this.modified.get(GregorianCalendar.MINUTE));
+		row.put(SqlAdapterKeys.KEY_SECOND,
+				this.modified.get(GregorianCalendar.SECOND));
 		return row;
 	}
 
@@ -125,15 +131,18 @@ public class GroceryList implements IContentValueizer, Comparable<GroceryList> {
 				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_HOUR));
 		int minute = cursor.getInt(cursor
 				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_MINUTE));
+		int second = cursor.getInt(cursor
+				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_SECOND));
 		this.id = cursor.getLong(cursor
 				.getColumnIndexOrThrow(SqlAdapterKeys.KEY_ID));
-		this.modified = new GregorianCalendar(year, month, day, hour, minute);
+		this.modified = new GregorianCalendar(year, month, day, hour, minute, second);
 		return this;
 	}
 
 	@Override
 	public int compareTo(GroceryList another) {
 		int comp = this.getDateModified().compareTo(another.getDateModified());
+		Log.d(DrawerActivity.SCANIT, "" + this.getDateModified().get(GregorianCalendar.SECOND) + " : " + another.getDateModified().get(GregorianCalendar.SECOND));
 		return (comp == 0) ? this.name.compareTo(another.name) : comp;
 	}
 }

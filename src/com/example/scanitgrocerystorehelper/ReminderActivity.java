@@ -7,6 +7,7 @@ import com.example.scanitgrocerystorehelper.adapters.ReminderArrayAdapter;
 import com.example.scanitgrocerystorehelper.adapters.sql.ReminderSqlAdapter;
 import com.example.scanitgrocerystorehelper.models.ExpirationReminder;
 import com.example.scanitgrocerystorehelper.models.GeneralReminder;
+import com.example.scanitgrocerystorehelper.models.GroceryList;
 import com.example.scanitgrocerystorehelper.models.Reminder;
 import com.example.scanitgrocerystorehelper.receivers.AlarmReceiver;
 
@@ -18,17 +19,21 @@ import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnShowListener;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -55,16 +60,6 @@ public class ReminderActivity extends DrawerActivity {
 		ListView listview = (ListView) findViewById(R.id.reminders);
 		listview.setAdapter(mAdapter);
 
-		listview.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				showDeleteReminderDialog(position);
-				return true;
-			}
-		});
-
 		listview.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -75,6 +70,56 @@ public class ReminderActivity extends DrawerActivity {
 					enterExpirationReminderInfoDialog((ExpirationReminder) r);
 				} else {
 					enterGeneralReminderInfoDialog((GeneralReminder) r);
+				}
+			}
+		});
+
+		listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+		listview.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+			ArrayList<Reminder> mChosenReminders;
+			Menu mMenu;
+
+			@Override
+			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+				return false;
+			}
+
+			@Override
+			public void onDestroyActionMode(ActionMode mode) {
+
+			}
+
+			@Override
+			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+				getMenuInflater().inflate(R.menu.edit_delete_contextual_menu,
+						menu);
+				mChosenReminders = new ArrayList<Reminder>();
+				mMenu = menu;
+				mode.setTitle(R.string.reminder_contextual_title);
+				((MenuItem) mMenu.findItem(R.id.edit)).setVisible(false);
+				((MenuItem) mMenu.findItem(R.id.edit)).setEnabled(false);
+				return true;
+			}
+
+			@Override
+			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+				switch (item.getItemId()) {
+				case R.id.delete:
+					showDeleteReminderDialog(mChosenReminders);
+					return true;
+				default:
+					return false;
+				}
+			}
+
+			@Override
+			public void onItemCheckedStateChanged(ActionMode mode,
+					int position, long id, boolean checked) {
+				Reminder item = mAdapter.getItem(position);
+				if (checked) {
+					mChosenReminders.add(item);
+				} else {
+					mChosenReminders.remove(item);
 				}
 			}
 		});
@@ -178,28 +223,45 @@ public class ReminderActivity extends DrawerActivity {
 				builder.setView(v);
 				builder.setTitle(R.string.create_reminder);
 				builder.setNegativeButton(android.R.string.cancel, null);
-				builder.setPositiveButton(R.string.add, new OnClickListener() {
+				builder.setPositiveButton(R.string.add, null);
+				Dialog dialog = builder.create();
+				dialog.setOnShowListener(new OnShowListener() {
 
 					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						int month = datePicker.getMonth();
-						int day = datePicker.getDayOfMonth();
-						int year = datePicker.getYear();
-						String foodName = editName.getText().toString();
-						if (reminderToUpdate != null) {
-							reminderToUpdate.setFoodName(foodName);
-							reminderToUpdate.setMonth(month);
-							reminderToUpdate.setDay(day);
-							reminderToUpdate.setYear(year);
-							updateReminder(reminderToUpdate);
-						} else {
-							ExpirationReminder reminder = new ExpirationReminder(
-									getActivity(), month, day, year, foodName);
-							addReminder(reminder);
-						}
+					public void onShow(DialogInterface dialog) {
+						final DialogInterface d = dialog;
+						Button b = ((AlertDialog) dialog)
+								.getButton(AlertDialog.BUTTON_POSITIVE);
+						b.setOnClickListener(new View.OnClickListener() {
+
+							@Override
+							public void onClick(View view) {
+								int month = datePicker.getMonth();
+								int day = datePicker.getDayOfMonth();
+								int year = datePicker.getYear();
+								String foodName = editName.getText().toString();
+								if (foodName.length() > 0) {
+									if (reminderToUpdate != null) {
+										reminderToUpdate.setFoodName(foodName);
+										reminderToUpdate.setMonth(month);
+										reminderToUpdate.setDay(day);
+										reminderToUpdate.setYear(year);
+										updateReminder(reminderToUpdate);
+									} else {
+										ExpirationReminder reminder = new ExpirationReminder(
+												getActivity(), month, day,
+												year, foodName);
+										addReminder(reminder);
+									}
+									d.dismiss();
+								} else {
+									editName.setError(getString(R.string.reminder_name_error));
+								}
+							}
+						});
 					}
 				});
-				return builder.create();
+				return dialog;
 			}
 		};
 		df.show(getFragmentManager(), "reminder info");
@@ -247,36 +309,60 @@ public class ReminderActivity extends DrawerActivity {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						int month = datePicker.getMonth();
-						int day = datePicker.getDayOfMonth();
-						int year = datePicker.getYear();
-						int hour = timePicker.getCurrentHour();
-						int minute = timePicker.getCurrentMinute();
-						String name = editName.getText().toString();
-						Log.d(DrawerActivity.SCANIT, "" + hour + ":" + minute);
-						if (reminderToUpdate != null) {
-							reminderToUpdate.setName(name);
-							reminderToUpdate.setMonth(month);
-							reminderToUpdate.setDay(day);
-							reminderToUpdate.setYear(year);
-							reminderToUpdate.setHour(hour);
-							reminderToUpdate.setMinute(minute);
-							updateReminder(reminderToUpdate);
-						} else {
-							GeneralReminder reminder = new GeneralReminder(
-									getActivity(), month, day, year, hour,
-									minute, name);
-							addReminder(reminder);
-						}
+
 					}
 				});
-				return builder.create();
+				Dialog dialog = builder.create();
+				dialog.setOnShowListener(new OnShowListener() {
+
+					@Override
+					public void onShow(DialogInterface dialog) {
+						final DialogInterface d = dialog;
+						Button b = ((AlertDialog) dialog)
+								.getButton(AlertDialog.BUTTON_POSITIVE);
+						b.setOnClickListener(new View.OnClickListener() {
+
+							@Override
+							public void onClick(View view) {
+								int month = datePicker.getMonth();
+								int day = datePicker.getDayOfMonth();
+								int year = datePicker.getYear();
+								int hour = timePicker.getCurrentHour();
+								int minute = timePicker.getCurrentMinute();
+								String name = editName.getText().toString();
+								Log.d(DrawerActivity.SCANIT, "" + hour + ":"
+										+ minute);
+								if (name.length() > 0) {
+									if (reminderToUpdate != null) {
+										reminderToUpdate.setName(name);
+										reminderToUpdate.setMonth(month);
+										reminderToUpdate.setDay(day);
+										reminderToUpdate.setYear(year);
+										reminderToUpdate.setHour(hour);
+										reminderToUpdate.setMinute(minute);
+										updateReminder(reminderToUpdate);
+									} else {
+										GeneralReminder reminder = new GeneralReminder(
+												getActivity(), month, day,
+												year, hour, minute, name);
+										addReminder(reminder);
+									}
+									d.dismiss();
+								} else {
+									editName.setError(getString(R.string.reminder_name_error));
+								}
+							}
+						});
+					}
+				});
+				return dialog;
 			}
 		};
 		df.show(getFragmentManager(), "reminder info");
 	}
 
-	public void showDeleteReminderDialog(final int position) {
+	public void showDeleteReminderDialog(
+			final ArrayList<Reminder> remindersToDelete) {
 		DialogFragment df = new DialogFragment() {
 			@Override
 			public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -290,7 +376,9 @@ public class ReminderActivity extends DrawerActivity {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								deleteReminder(mAdapter.getItem(position));
+								for (Reminder reminder : remindersToDelete) {
+									deleteReminder(reminder);
+								}
 							}
 						});
 				return builder.create();

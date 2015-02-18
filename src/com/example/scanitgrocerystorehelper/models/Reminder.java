@@ -14,7 +14,7 @@ import android.os.Parcelable;
 import android.util.Log;
 
 public abstract class Reminder implements Comparable<Reminder>,
-		IContentValueizer, INotifcationizer, Parcelable {
+		IContentValueizer, INotifcationizer, Parcelable, IReminderTime {
 
 	private Context context;
 	private GregorianCalendar calendar;
