@@ -23,6 +23,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface.OnShowListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -32,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
@@ -293,9 +295,21 @@ public class ListActivity extends DrawerActivity {
 				.inflate(R.layout.dialog_add_list_item, null);
 		builder.setView(mView);
 
-		builder.setPositiveButton(R.string.add,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
+		builder.setPositiveButton(R.string.add, null);
+		builder.setNegativeButton(android.R.string.cancel, null);
+
+		AlertDialog dialog = builder.create();
+		dialog.setOnShowListener(new OnShowListener() {
+
+			@Override
+			public void onShow(DialogInterface dialog) {
+				final DialogInterface d = dialog;
+				Button b = ((AlertDialog) dialog)
+						.getButton(AlertDialog.BUTTON_POSITIVE);
+				b.setOnClickListener(new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
 						EditText nameView = (EditText) mView
 								.findViewById(R.id.dialogAddItemName);
 						EditText quantityView = (EditText) mView
@@ -308,23 +322,27 @@ public class ListActivity extends DrawerActivity {
 						String quant = quantityView.getText().toString();
 						int quantity = (quant.length() == 0) ? -1 : Integer
 								.parseInt(quant);
-						if (priceView.getText().length() != 0) {
-							BigDecimal price = new BigDecimal(priceView
-									.getText().toString());
-							newListItem = new ListItem(name, quantity, price,
-									mGroceryList.getId());
-							updateList();
-						} else {
-							newListItem = new ListItem(name, quantity,
-									mGroceryList.getId());
-						}
+						if (name.length() > 0) {
+							if (priceView.getText().length() != 0) {
+								BigDecimal price = new BigDecimal(priceView
+										.getText().toString());
+								newListItem = new ListItem(name, quantity,
+										price, mGroceryList.getId());
+								updateList();
+							} else {
+								newListItem = new ListItem(name, quantity,
+										mGroceryList.getId());
+							}
 
-						addListItem(newListItem);
+							addListItem(newListItem);
+							d.dismiss();
+						} else {
+							nameView.setError(getString(R.string.list_item_name_error));
+						}
 					}
 				});
-		builder.setNegativeButton(android.R.string.cancel, null);
-
-		AlertDialog dialog = builder.create();
+			}
+		});
 		dialog.show();
 	}
 
@@ -353,28 +371,41 @@ public class ListActivity extends DrawerActivity {
 							+ listToUpdate.getPrice().setScale(2,
 									RoundingMode.HALF_UP));
 		}
-		builder.setPositiveButton(R.string.add,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
+		builder.setPositiveButton(R.string.add, null);
+		builder.setNegativeButton(android.R.string.cancel, null);
+		AlertDialog dialog = builder.create();
+		dialog.setOnShowListener(new OnShowListener() {
 
-						ListItem newListItem;
+			@Override
+			public void onShow(DialogInterface dialog) {
+				final DialogInterface d = dialog;
+				Button b = ((AlertDialog) dialog)
+						.getButton(AlertDialog.BUTTON_POSITIVE);
+				b.setOnClickListener(new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
 						String name = nameView.getText().toString();
 						String quant = quantityView.getText().toString();
 						int quantity = (quant.length() == 0) ? -1 : Integer
 								.parseInt(quant);
-						listToUpdate.setName(name);
-						listToUpdate.setQuantity(quantity);
-						if (priceView.getText().length() != 0) {
-							BigDecimal price = new BigDecimal(priceView
-									.getText().toString());
-							listToUpdate.setPrice(price);
+						if (name.length() > 0) {
+							listToUpdate.setName(name);
+							listToUpdate.setQuantity(quantity);
+							if (priceView.getText().length() != 0) {
+								BigDecimal price = new BigDecimal(priceView
+										.getText().toString());
+								listToUpdate.setPrice(price);
+							}
+							updateListItem(listToUpdate);
+							d.dismiss();
+						} else {
+							nameView.setError(getString(R.string.list_item_name_error));
 						}
-						updateListItem(listToUpdate);
 					}
 				});
-		builder.setNegativeButton(android.R.string.cancel, null);
-
-		AlertDialog dialog = builder.create();
+			}
+		});
 		dialog.show();
 	}
 
