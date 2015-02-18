@@ -168,7 +168,7 @@ public class MainActivity extends DrawerActivity {
 				Button b = ((AlertDialog) dialog)
 						.getButton(AlertDialog.BUTTON_POSITIVE);
 				b.setOnClickListener(new View.OnClickListener() {
-					
+
 					@Override
 					public void onClick(View v) {
 						EditText nameView = (EditText) mView
@@ -184,7 +184,7 @@ public class MainActivity extends DrawerActivity {
 							addGroceryList(newList);
 							d.dismiss();
 						}
-						
+
 					}
 				});
 			}
@@ -209,18 +209,36 @@ public class MainActivity extends DrawerActivity {
 			descriptionView.setText(list.getDescription());
 		}
 
-		builder.setPositiveButton(R.string.add,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						list.setName(nameView.getText().toString());
-						list.setDescription(descriptionView.getText()
-								.toString());
-						updateGroceryList(list);
-					}
-				});
+		builder.setPositiveButton(R.string.add, null);
 		builder.setNegativeButton(android.R.string.cancel, null);
 
 		AlertDialog dialog = builder.create();
+		dialog.setOnShowListener(new OnShowListener() {
+
+			@Override
+			public void onShow(DialogInterface dialog) {
+				final DialogInterface d = dialog;
+				Button b = ((AlertDialog) dialog)
+						.getButton(AlertDialog.BUTTON_POSITIVE);
+				b.setOnClickListener(new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						String name = nameView.getText().toString();
+						if (name.length() == 0) {
+							nameView.setError(getString(R.string.list_name_error));
+						} else {
+							list.setName(name);
+							list.setDescription(descriptionView.getText()
+									.toString());
+							updateGroceryList(list);
+							d.dismiss();
+						}
+
+					}
+				});
+			}
+		});
 		dialog.show();
 	}
 
