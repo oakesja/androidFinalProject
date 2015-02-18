@@ -194,15 +194,22 @@ public class ReminderActivity extends DrawerActivity {
 			final ExpirationReminder reminderToUpdate) {
 		DialogFragment df = new DialogFragment() {
 			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						getActivity());
 				final View v = getLayoutInflater().inflate(
 						R.layout.dialog_reminder, null);
 
 				final EditText editName = (EditText) v
 						.findViewById(R.id.reminderNameEditText);
+				String posButtonText = "";
 				if (reminderToUpdate != null) {
+					builder.setTitle(R.string.edit_reminder);
 					editName.setText(reminderToUpdate.getFoodName());
+					posButtonText = getString(R.string.update);
 				} else {
-					editName.setHint(R.string.hint_food_reminder);
+					builder.setTitle(R.string.create_reminder);
+					editName.setHint(R.string.hint_general_reminder);
+					posButtonText = getString(R.string.add);
 				}
 
 				final TimePicker timePicker = (TimePicker) v
@@ -218,12 +225,9 @@ public class ReminderActivity extends DrawerActivity {
 							reminderToUpdate.getDay());
 				}
 
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						getActivity());
 				builder.setView(v);
-				builder.setTitle(R.string.create_reminder);
 				builder.setNegativeButton(android.R.string.cancel, null);
-				builder.setPositiveButton(R.string.add, null);
+				builder.setPositiveButton(posButtonText, null);
 				Dialog dialog = builder.create();
 				dialog.setOnShowListener(new OnShowListener() {
 
@@ -273,15 +277,23 @@ public class ReminderActivity extends DrawerActivity {
 			@SuppressLint("InflateParams")
 			@Override
 			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						getActivity());
 				final View v = getLayoutInflater().inflate(
 						R.layout.dialog_reminder, null);
 
 				final EditText editName = (EditText) v
 						.findViewById(R.id.reminderNameEditText);
+				
+				String posButtonText = "";
 				if (reminderToUpdate != null) {
+					builder.setTitle(R.string.edit_reminder);
 					editName.setText(reminderToUpdate.getName());
+					posButtonText = getString(R.string.update);
 				} else {
+					builder.setTitle(R.string.create_reminder);
 					editName.setHint(R.string.hint_general_reminder);
+					posButtonText = getString(R.string.add);
 				}
 
 				final TimePicker timePicker = (TimePicker) v
@@ -299,13 +311,9 @@ public class ReminderActivity extends DrawerActivity {
 							reminderToUpdate.getMonth(),
 							reminderToUpdate.getDay());
 				}
-
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						getActivity());
 				builder.setView(v);
-				builder.setTitle(R.string.create_reminder);
 				builder.setNegativeButton(android.R.string.cancel, null);
-				builder.setPositiveButton(R.string.add, new OnClickListener() {
+				builder.setPositiveButton(posButtonText, new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {

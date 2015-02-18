@@ -209,7 +209,7 @@ public class MainActivity extends DrawerActivity {
 			descriptionView.setText(list.getDescription());
 		}
 
-		builder.setPositiveButton(R.string.add, null);
+		builder.setPositiveButton(R.string.update, null);
 		builder.setNegativeButton(android.R.string.cancel, null);
 
 		AlertDialog dialog = builder.create();

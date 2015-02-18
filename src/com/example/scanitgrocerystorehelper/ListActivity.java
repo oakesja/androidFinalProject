@@ -40,7 +40,6 @@ import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AbsListView.MultiChoiceModeListener;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
 public class ListActivity extends DrawerActivity {
@@ -371,7 +370,7 @@ public class ListActivity extends DrawerActivity {
 							+ listToUpdate.getPrice().setScale(2,
 									RoundingMode.HALF_UP));
 		}
-		builder.setPositiveButton(R.string.add, null);
+		builder.setPositiveButton(R.string.update, null);
 		builder.setNegativeButton(android.R.string.cancel, null);
 		AlertDialog dialog = builder.create();
 		dialog.setOnShowListener(new OnShowListener() {
