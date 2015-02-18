@@ -7,6 +7,7 @@ import com.example.scanitgrocerystorehelper.adapters.ReminderArrayAdapter;
 import com.example.scanitgrocerystorehelper.adapters.sql.ReminderSqlAdapter;
 import com.example.scanitgrocerystorehelper.models.ExpirationReminder;
 import com.example.scanitgrocerystorehelper.models.GeneralReminder;
+import com.example.scanitgrocerystorehelper.models.GroceryList;
 import com.example.scanitgrocerystorehelper.models.Reminder;
 import com.example.scanitgrocerystorehelper.receivers.AlarmReceiver;
 
@@ -22,10 +23,12 @@ import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
@@ -55,16 +58,6 @@ public class ReminderActivity extends DrawerActivity {
 		ListView listview = (ListView) findViewById(R.id.reminders);
 		listview.setAdapter(mAdapter);
 
-		listview.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				showDeleteReminderDialog(position);
-				return true;
-			}
-		});
-
 		listview.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -75,6 +68,56 @@ public class ReminderActivity extends DrawerActivity {
 					enterExpirationReminderInfoDialog((ExpirationReminder) r);
 				} else {
 					enterGeneralReminderInfoDialog((GeneralReminder) r);
+				}
+			}
+		});
+
+		listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+		listview.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+			ArrayList<Reminder> mChosenReminders;
+			Menu mMenu;
+
+			@Override
+			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+				return false;
+			}
+
+			@Override
+			public void onDestroyActionMode(ActionMode mode) {
+
+			}
+
+			@Override
+			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+				getMenuInflater().inflate(R.menu.edit_delete_contextual_menu,
+						menu);
+				mChosenReminders = new ArrayList<Reminder>();
+				mMenu = menu;
+				mode.setTitle(R.string.reminder_contextual_title);
+				((MenuItem) mMenu.findItem(R.id.edit)).setVisible(false);
+				((MenuItem) mMenu.findItem(R.id.edit)).setEnabled(false);
+				return true;
+			}
+
+			@Override
+			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+				switch (item.getItemId()) {
+				case R.id.delete:
+					showDeleteReminderDialog(mChosenReminders);
+					return true;
+				default:
+					return false;
+				}
+			}
+
+			@Override
+			public void onItemCheckedStateChanged(ActionMode mode,
+					int position, long id, boolean checked) {
+				Reminder item = mAdapter.getItem(position);
+				if (checked) {
+					mChosenReminders.add(item);
+				} else {
+					mChosenReminders.remove(item);
 				}
 			}
 		});
@@ -276,7 +319,8 @@ public class ReminderActivity extends DrawerActivity {
 		df.show(getFragmentManager(), "reminder info");
 	}
 
-	public void showDeleteReminderDialog(final int position) {
+	public void showDeleteReminderDialog(
+			final ArrayList<Reminder> remindersToDelete) {
 		DialogFragment df = new DialogFragment() {
 			@Override
 			public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -290,7 +334,9 @@ public class ReminderActivity extends DrawerActivity {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								deleteReminder(mAdapter.getItem(position));
+								for (Reminder reminder : remindersToDelete) {
+									deleteReminder(reminder);
+								}
 							}
 						});
 				return builder.create();
