@@ -13,6 +13,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnShowListener;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -155,22 +157,39 @@ public class MainActivity extends DrawerActivity {
 		builder.setView(mView);
 		builder.setTitle(R.string.create_dialog_title);
 
-		builder.setPositiveButton(R.string.add,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
+		builder.setPositiveButton(R.string.add, null);
+		builder.setNegativeButton(android.R.string.cancel, null);
+		AlertDialog dialog = builder.create();
+		dialog.setOnShowListener(new OnShowListener() {
+
+			@Override
+			public void onShow(DialogInterface dialog) {
+				final DialogInterface d = dialog;
+				Button b = ((AlertDialog) dialog)
+						.getButton(AlertDialog.BUTTON_POSITIVE);
+				b.setOnClickListener(new View.OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
 						EditText nameView = (EditText) mView
 								.findViewById(R.id.dialogAddName);
 						EditText courseView = (EditText) mView
 								.findViewById(R.id.dialogAddDescription);
-						GroceryList newList = new GroceryList(nameView
-								.getText().toString(), courseView.getText()
-								.toString());
-						addGroceryList(newList);
+						String name = nameView.getText().toString();
+						if (name.length() == 0) {
+							nameView.setError(getString(R.string.list_name_error));
+						} else {
+							GroceryList newList = new GroceryList(name,
+									courseView.getText().toString());
+							addGroceryList(newList);
+							d.dismiss();
+						}
+						
 					}
 				});
-		builder.setNegativeButton(android.R.string.cancel, null);
+			}
+		});
 
-		AlertDialog dialog = builder.create();
 		dialog.show();
 	}
 
