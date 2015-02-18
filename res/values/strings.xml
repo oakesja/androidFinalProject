@@ -75,5 +75,6 @@
     <string name="list_contextual_title">Manage List Items</string>
     <string name="reminder_contextual_title">Manage Reminders</string>
     <string name="list_name_error">List name is required</string>
+    <string name="reminder_name_error">Reminder name is required</string>
 
 </resources>
