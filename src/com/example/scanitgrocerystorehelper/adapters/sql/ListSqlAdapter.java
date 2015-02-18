@@ -84,6 +84,12 @@ public class ListSqlAdapter {
 		listItem.setId(rowId);
 	}
 
+	public void updateListItem(ListItem listItem) {
+		ContentValues row = listItem.getContentValue();
+		mDatabase.update(SqlAdapterKeys.LIST_ITEMS_TABLE, row,
+				SqlAdapterKeys.KEY_ID + " == " + listItem.getId(), null);
+	}
+
 	public void setListItems(ArrayList<ListItem> items, long listId) {
 		items.clear();
 		Cursor cursor = mDatabase.query(SqlAdapterKeys.LIST_ITEMS_TABLE, null,

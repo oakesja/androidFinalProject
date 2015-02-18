@@ -26,6 +26,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +37,7 @@ import android.widget.ListView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
@@ -72,19 +74,8 @@ public class ListActivity extends DrawerActivity {
 		mAdapter = new ListItemArrayAdapter(this, mList);
 		mListView.setAdapter(mAdapter);
 
+		getActionBar().setTitle(mGroceryList.getName());
 		updateList();
-
-		mListView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> a, View v, int position,
-					long id) {
-				Object o = mListView.getItemAtPosition(position);
-				ListItem fullObject = (ListItem) o;
-				Toast.makeText(ListActivity.this,
-						"You have chosen: " + " " + fullObject.getName(),
-						Toast.LENGTH_LONG).show();
-			}
-		});
 
 		mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
@@ -94,8 +85,62 @@ public class ListActivity extends DrawerActivity {
 				return true;
 			}
 		});
-		
-		getActionBar().setTitle(mGroceryList.getName());
+
+		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+		mListView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+			ArrayList<ListItem> mChosenItems;
+			Menu mMenu;
+
+			@Override
+			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+				return false;
+			}
+
+			@Override
+			public void onDestroyActionMode(ActionMode mode) {
+
+			}
+
+			@Override
+			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+				getMenuInflater().inflate(R.menu.edit_delete_contextual_menu,
+						menu);
+				mChosenItems = new ArrayList<ListItem>();
+				mMenu = menu;
+				mode.setTitle(R.string.list_contextual_title);
+				return true;
+			}
+
+			@Override
+			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+				switch (item.getItemId()) {
+				case R.id.edit:
+					showUpdateListItemDialog(mChosenItems.get(0));
+					return true;
+
+				case R.id.delete:
+					showDeleteListItemDialog(mChosenItems);
+					return true;
+				default:
+					return false;
+				}
+			}
+
+			@Override
+			public void onItemCheckedStateChanged(ActionMode mode,
+					int position, long id, boolean checked) {
+				ListItem item = mAdapter.getItem(position);
+				if (checked) {
+					mChosenItems.add(item);
+				} else {
+					mChosenItems.remove(item);
+				}
+				boolean vis = (mChosenItems.size() > 1) ? false : true;
+				((MenuItem) mMenu.findItem(R.id.edit)).setVisible(vis);
+				((MenuItem) mMenu.findItem(R.id.edit)).setEnabled(vis);
+
+			}
+		});
 	}
 
 	@Override
@@ -283,6 +328,81 @@ public class ListActivity extends DrawerActivity {
 		dialog.show();
 	}
 
+	@SuppressLint("InflateParams")
+	public void showUpdateListItemDialog(final ListItem listToUpdate) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		LayoutInflater inflater = this.getLayoutInflater();
+		final View mView = inflater
+				.inflate(R.layout.dialog_add_list_item, null);
+		builder.setView(mView);
+
+		final EditText nameView = (EditText) mView
+				.findViewById(R.id.dialogAddItemName);
+		final EditText quantityView = (EditText) mView
+				.findViewById(R.id.dialogAddQuantity);
+		final EditText priceView = (EditText) mView
+				.findViewById(R.id.dialogAddPrice);
+
+		nameView.setText(listToUpdate.getName());
+		if (listToUpdate.getQuantity() != -1) {
+			quantityView.setText("" + listToUpdate.getQuantity());
+		}
+		if (!listToUpdate.getPrice().equals(new BigDecimal(0))) {
+			priceView
+					.setText(""
+							+ listToUpdate.getPrice().setScale(2,
+									RoundingMode.HALF_UP));
+		}
+		builder.setPositiveButton(R.string.add,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+
+						ListItem newListItem;
+						String name = nameView.getText().toString();
+						String quant = quantityView.getText().toString();
+						int quantity = (quant.length() == 0) ? -1 : Integer
+								.parseInt(quant);
+						listToUpdate.setName(name);
+						listToUpdate.setQuantity(quantity);
+						if (priceView.getText().length() != 0) {
+							BigDecimal price = new BigDecimal(priceView
+									.getText().toString());
+							listToUpdate.setPrice(price);
+						}
+						updateListItem(listToUpdate);
+					}
+				});
+		builder.setNegativeButton(android.R.string.cancel, null);
+
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
+
+	public void showDeleteListItemDialog(final ArrayList<ListItem> itemsToDelete) {
+		DialogFragment df = new DialogFragment() {
+			@Override
+			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						getActivity());
+				builder.setTitle(R.string.confirm_delete_title);
+				builder.setMessage(R.string.confirm_delete_message_list_items);
+				builder.setNegativeButton(android.R.string.cancel, null);
+				builder.setPositiveButton(android.R.string.ok,
+						new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								for (ListItem item : itemsToDelete) {
+									deleteListItem(item);
+								}
+							}
+						});
+				return builder.create();
+			}
+		};
+		df.show(getFragmentManager(), "delete list");
+	}
+
 	public void startShopping(View v) {
 		Intent newIntent = new Intent(ListActivity.this, ShoppingActivity.class);
 		newIntent.putExtra(MainActivity.KEY_LIST_ID, mGroceryList.getId());
@@ -296,8 +416,7 @@ public class ListActivity extends DrawerActivity {
 		BigDecimal total = new BigDecimal("0.00");
 		for (ListItem l : mList) {
 			int quant = (l.getQuantity() == -1) ? 1 : l.getQuantity();
-			total = total.add(
-					l.getPrice().multiply(new BigDecimal(quant)))
+			total = total.add(l.getPrice().multiply(new BigDecimal(quant)))
 					.setScale(2, RoundingMode.HALF_UP);
 		}
 		totalView.setText("$" + total.toString());
@@ -305,6 +424,13 @@ public class ListActivity extends DrawerActivity {
 
 	private void addListItem(ListItem listItem) {
 		mSqlAdapter.addListItem(listItem);
+		mSqlAdapter.setListItems(mList, mGroceryList.getId());
+		mAdapter.notifyDataSetChanged();
+		updateList();
+	}
+
+	private void updateListItem(ListItem listItem) {
+		mSqlAdapter.updateListItem(listItem);
 		mSqlAdapter.setListItems(mList, mGroceryList.getId());
 		mAdapter.notifyDataSetChanged();
 		updateList();
