@@ -38,6 +38,12 @@ public class ListSqlAdapter {
 		list.setId(rowId);
 	}
 
+	public void updateList(GroceryList list) {
+		ContentValues row = list.getContentValue();
+		mDatabase.update(SqlAdapterKeys.LIST_TABLE, row, SqlAdapterKeys.KEY_ID
+				+ " == " + list.getId(), null);
+	}
+
 	public void setAllLists(ArrayList<GroceryList> lists) {
 		lists.clear();
 		Cursor cursor = mDatabase.query(SqlAdapterKeys.LIST_TABLE, null, null,
