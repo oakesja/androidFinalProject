@@ -77,5 +77,9 @@
     <string name="list_name_error">List name is required</string>
     <string name="reminder_name_error">Reminder name is required</string>
     <string name="list_item_name_error">List item name is required</string>
+    <string name="speech_item_removed">%s removed</string>
+    <string name="speech_remove_item_title">Say the name of the item you want to remove</string>
+    <string name="speech_could_not_find">Could not find %s in your list</string>
+    <string name="speech_too_many_matches">Too many matches found to remove. Please be more specific</string>
 
 </resources>

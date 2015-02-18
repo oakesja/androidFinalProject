@@ -7,6 +7,7 @@ import java.util.Locale;
 import com.example.scanitgrocerystorehelper.adapters.ShoppingActivityArrayAdapter;
 import com.example.scanitgrocerystorehelper.adapters.sql.ListSqlAdapter;
 import com.example.scanitgrocerystorehelper.models.ListItem;
+import com.example.scanitgrocerystorehelper.utils.Speaker;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -30,6 +31,7 @@ public class ShoppingActivity extends Activity {
 	private ArrayList<ListItem> mList;
 	private ShoppingActivityArrayAdapter mArrayAdapter;
 	private final int REQ_CODE_SPEECH_INPUT = 100;
+	private Speaker mSpeaker;
 
 	public static final int SHOPPING_ACTIVITY_DELETE_LIST = 1;
 
@@ -59,12 +61,14 @@ public class ShoppingActivity extends Activity {
 				markOffItem(li);
 			}
 		});
+		mSpeaker = new Speaker(this);
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		mSqlAdapter.close();
+		mSpeaker.destroy();
 	}
 
 	@Override
@@ -151,7 +155,7 @@ public class ShoppingActivity extends Activity {
 				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
 		intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-				getString(R.string.say_item));
+				getString(R.string.speech_remove_item_title));
 		try {
 			startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
 		} catch (ActivityNotFoundException a) {
@@ -171,30 +175,39 @@ public class ShoppingActivity extends Activity {
 						.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 				Log.d(DrawerActivity.SCANIT, results.toString());
 				ListItem bestMatch = null;
-				for(ListItem item : mList){
-					if(item.isCheckedOff()){
+				boolean tooMany = false;
+				for (ListItem item : mList) {
+					if (item.isCheckedOff()) {
 						break;
 					}
 					float localBestPerc = 0;
 					for (String possibleMatch : results) {
 						float p = getPercentageMatch(item, possibleMatch);
-						if(p > localBestPerc) {
+						if (p > localBestPerc) {
 							localBestPerc = p;
 						}
 					}
-					if(localBestPerc == 1.0){
+					if (localBestPerc == 1.0) {
 						bestMatch = item;
 						break;
-					} else if(localBestPerc > 0.5 && bestMatch == null) {
+					} else if (localBestPerc > 0.5 && bestMatch == null) {
 						bestMatch = item;
 					} else if (localBestPerc > 0.5) {
 						// too many matches
 						bestMatch = null;
+						tooMany = true;
 						break;
 					}
 				}
-				if(bestMatch != null){
+				if (bestMatch != null) {
 					markOffItem(bestMatch);
+					mSpeaker.speak(getString(R.string.speech_item_removed,
+							bestMatch.getName()));
+				} else if (tooMany) {
+					mSpeaker.speak(getString(R.string.speech_too_many_matches));
+				} else {
+					mSpeaker.speak(getString(R.string.speech_could_not_find,
+							results.get(0)));
 				}
 			}
 			break;
@@ -203,24 +216,25 @@ public class ShoppingActivity extends Activity {
 			break;
 		}
 	}
-	
-	private float getPercentageMatch(ListItem item, String proposedName){
-		String[]itemParts =  item.getName().split("\\s+");
-		String[]proposedNameParts = proposedName.split("\\s+");
+
+	private float getPercentageMatch(ListItem item, String proposedName) {
+		String[] itemParts = item.getName().split("\\s+");
+		String[] proposedNameParts = proposedName.split("\\s+");
 		int count = 0;
 		for (int i = 0; i < proposedNameParts.length; i++) {
-			if(i > itemParts.length - 1){
+			if (i > itemParts.length - 1) {
 				break;
-			} 
-			Log.d(DrawerActivity.SCANIT, itemParts[i] + " : " +  proposedNameParts[i]);
-			if(itemParts[i].equalsIgnoreCase(proposedNameParts[i])){
+			}
+			Log.d(DrawerActivity.SCANIT, itemParts[i] + " : "
+					+ proposedNameParts[i]);
+			if (itemParts[i].equalsIgnoreCase(proposedNameParts[i])) {
 				count++;
 			}
 		}
-		Log.d(DrawerActivity.SCANIT, "" + count + " : " +  itemParts.length);
+		Log.d(DrawerActivity.SCANIT, "" + count + " : " + itemParts.length);
 		int denom = Math.max(itemParts.length, proposedNameParts.length);
 		Log.d(DrawerActivity.SCANIT, "" + denom);
-		return (float)count/denom;
+		return (float) count / denom;
 	}
 
 	private void markOffItem(ListItem li) {
