@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
+     <item
+        android:id="@+id/sayItem"
+        android:icon="@drawable/ic_action_mic"
+        android:showAsAction="always"
+        android:title="@string/say_item">
+    </item>
+    
     <item
         android:id="@+id/doneShopping"
         android:icon="@drawable/ic_action_accept"
